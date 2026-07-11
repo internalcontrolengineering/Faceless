@@ -1,0 +1,4509 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>👥 Faceless</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
+    <style>
+        /* ============================================================
+           ESTILO CLAYMORFISMO - AZUL FUERTE
+           ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #dce8f5;
+            min-height: 100vh;
+            font-family: 'Nunito', 'Segoe UI', 'Comic Sans MS', cursive, sans-serif;
+            color: #1a2a3a;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(70, 130, 200, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(100, 150, 220, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(50, 100, 180, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .app-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+        }
+
+        /* ========== HEADER ========== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 22px 32px;
+            background: #b8d4ed;
+            border-radius: 40px 40px 40px 12px;
+            margin-bottom: 30px;
+            box-shadow:
+                8px 8px 0 #8ab3d4,
+                12px 12px 30px rgba(0, 0, 0, 0.08),
+                inset -4px -4px 8px rgba(0, 0, 0, 0.04),
+                inset 4px 4px 8px rgba(255, 255, 255, 0.7);
+            border: 3px solid #8ab3d4;
+            transform: rotate(-0.3deg);
+            position: relative;
+        }
+
+        .header::after {
+            content: '🌟';
+            position: absolute;
+            bottom: -12px;
+            right: -8px;
+            font-size: 1.8em;
+            transform: rotate(10deg);
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header h1 {
+            font-size: 2.4em;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #1a4a7a;
+            text-shadow: 3px 3px 0 #8ab3d4, 0 4px 15px rgba(26, 74, 122, 0.08);
+            letter-spacing: -0.5px;
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .header h1 .icon {
+            font-size: 1em;
+        }
+
+        .header .subtitle {
+            font-size: 1.5em;
+            opacity: 0.7;
+            font-weight: 700;
+            color: #2a5a8a;
+            display: block;
+            margin-top: -4px;
+            padding-left: 4px;
+            font-family: 'Nunito', sans-serif;
+            letter-spacing: 0.3px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .user-info {
+            background: #e4eff9;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 700;
+            color: #1a4a7a;
+            box-shadow:
+                inset -3px -3px 6px rgba(0, 0, 0, 0.04),
+                inset 3px 3px 6px rgba(255, 255, 255, 0.8);
+            border: 2px solid #8ab3d4;
+            font-size: 0.9em;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-size: 0.95em;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow:
+                5px 5px 0 rgba(0, 0, 0, 0.08),
+                8px 8px 20px rgba(0, 0, 0, 0.05),
+                inset -3px -3px 6px rgba(0, 0, 0, 0.03),
+                inset 3px 3px 6px rgba(255, 255, 255, 0.7);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transform: rotate(0.3deg);
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.02) rotate(-0.2deg);
+            box-shadow:
+                7px 7px 0 rgba(0, 0, 0, 0.06),
+                12px 12px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn:active {
+            transform: translateY(2px) scale(0.96);
+            box-shadow:
+                2px 2px 0 rgba(0, 0, 0, 0.05),
+                4px 4px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        .btn-primary {
+            background: #5b9bd5;
+            color: #ffffff;
+            border-color: #3d7bb5;
+            box-shadow:
+                5px 5px 0 #3d7bb5,
+                8px 8px 20px rgba(0, 0, 0, 0.08),
+                inset -3px -3px 6px rgba(0, 0, 0, 0.05),
+                inset 3px 3px 6px rgba(255, 255, 255, 0.5);
+        }
+        .btn-primary:hover {
+            box-shadow: 7px 7px 0 #3d7bb5, 12px 12px 30px rgba(0, 0, 0, 0.12);
+            background: #6aabdd;
+        }
+
+        .btn-success {
+            background: #5bc8b0;
+            color: #ffffff;
+            border-color: #3aaa92;
+            box-shadow: 5px 5px 0 #3aaa92, 8px 8px 20px rgba(0, 0, 0, 0.08), inset -3px -3px 6px rgba(0, 0, 0, 0.05), inset 3px 3px 6px rgba(255, 255, 255, 0.5);
+        }
+        .btn-success:hover {
+            box-shadow: 7px 7px 0 #3aaa92, 12px 12px 30px rgba(0, 0, 0, 0.12);
+            background: #6dd8c0;
+        }
+
+        .btn-danger {
+            background: #e88080;
+            color: #ffffff;
+            border-color: #cc5a5a;
+            box-shadow: 5px 5px 0 #cc5a5a, 8px 8px 20px rgba(0, 0, 0, 0.08), inset -3px -3px 6px rgba(0, 0, 0, 0.05), inset 3px 3px 6px rgba(255, 255, 255, 0.5);
+        }
+        .btn-danger:hover {
+            box-shadow: 7px 7px 0 #cc5a5a, 12px 12px 30px rgba(0, 0, 0, 0.12);
+            background: #ee9090;
+        }
+
+        .btn-secondary {
+            background: #c8d0d8;
+            color: #2a3a4a;
+            border-color: #a8b0b8;
+            box-shadow: 5px 5px 0 #a8b0b8, 8px 8px 20px rgba(0, 0, 0, 0.06), inset -3px -3px 6px rgba(0, 0, 0, 0.03), inset 3px 3px 6px rgba(255, 255, 255, 0.7);
+        }
+        .btn-secondary:hover {
+            box-shadow: 7px 7px 0 #a8b0b8, 12px 12px 30px rgba(0, 0, 0, 0.10);
+        }
+
+        .btn-warning {
+            background: #e8c85a;
+            color: #5a4a1a;
+            border-color: #ccaa3a;
+            box-shadow: 5px 5px 0 #ccaa3a, 8px 8px 20px rgba(0, 0, 0, 0.08), inset -3px -3px 6px rgba(0, 0, 0, 0.05), inset 3px 3px 6px rgba(255, 255, 255, 0.5);
+        }
+        .btn-warning:hover {
+            box-shadow: 7px 7px 0 #ccaa3a, 12px 12px 30px rgba(0, 0, 0, 0.12);
+            background: #eed86a;
+        }
+
+        .btn-glow {
+            background: #5b9bd5;
+            color: #ffffff;
+            border-color: #3d7bb5;
+            animation: clayPulse 2s ease-in-out infinite;
+            box-shadow: 5px 5px 0 #3d7bb5, 8px 8px 20px rgba(0, 0, 0, 0.08), inset -3px -3px 6px rgba(0, 0, 0, 0.05), inset 3px 3px 6px rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes clayPulse {
+            0%,
+            100% {
+                transform: scale(1) rotate(0.3deg);
+                box-shadow: 5px 5px 0 #3d7bb5, 8px 8px 20px rgba(0, 0, 0, 0.08);
+            }
+            50% {
+                transform: scale(1.03) rotate(-0.2deg);
+                box-shadow: 8px 8px 0 #3d7bb5, 12px 12px 30px rgba(0, 0, 0, 0.15);
+                background: #6aabdd;
+            }
+        }
+
+        /* ========== ADMIN FLOAT ========== */
+        .admin-float-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: #5b9bd5;
+            border: 4px solid #3d7bb5;
+            font-size: 2.2em;
+            cursor: pointer;
+            box-shadow: 6px 6px 0 #3d7bb5, 10px 10px 30px rgba(0, 0, 0, 0.12), inset -4px -4px 8px rgba(0, 0, 0, 0.05), inset 4px 4px 8px rgba(255, 255, 255, 0.5);
+            z-index: 999999 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .admin-float-btn:hover {
+            transform: scale(1.1) rotate(-8deg);
+            box-shadow: 8px 8px 0 #3d7bb5, 15px 15px 40px rgba(0, 0, 0, 0.15);
+            background: #6aabdd;
+        }
+        .admin-float-btn:active {
+            transform: scale(0.9);
+            box-shadow: 3px 3px 0 #3d7bb5;
+        }
+
+        /* ========== MODALES ========== */
+        .admin-modal,
+        .user-select-modal,
+        .password-modal,
+        .admin-login-modal,
+        .user-login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(6px);
+            z-index: 100000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .admin-modal.active,
+        .user-select-modal.active,
+        .password-modal.active,
+        .admin-login-modal.active,
+        .user-login-modal.active {
+            display: flex;
+            animation: clayFadeIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* ========== MODAL DE CONFIRMACIÓN - Z-INDEX MÁS ALTO ========== */
+        .confirm-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            z-index: 9999999 !important;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .confirm-modal.active {
+            display: flex;
+            animation: clayFadeIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes clayFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) rotate(-2deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .admin-modal-content,
+        .user-select-content,
+        .password-content,
+        .admin-login-content,
+        .user-login-content,
+        .confirm-content {
+            background: #c4dcef;
+            border-radius: 50px 50px 50px 12px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 12px 12px 0 #8ab3d4, 20px 20px 60px rgba(0, 0, 0, 0.10), inset -4px -4px 10px rgba(0, 0, 0, 0.04), inset 4px 4px 10px rgba(255, 255, 255, 0.7);
+            border: 4px solid #8ab3d4;
+            transform: rotate(0.3deg);
+        }
+        .user-select-content,
+        .password-content,
+        .admin-login-content,
+        .user-login-content,
+        .confirm-content {
+            max-width: 450px;
+        }
+
+        .admin-modal-content::-webkit-scrollbar {
+            width: 10px;
+        }
+        .admin-modal-content::-webkit-scrollbar-track {
+            background: #8ab3d4;
+            border-radius: 20px;
+        }
+        .admin-modal-content::-webkit-scrollbar-thumb {
+            background: #5b9bd5;
+            border-radius: 20px;
+            border: 2px solid #8ab3d4;
+        }
+
+        .admin-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 4px dashed #8ab3d4;
+        }
+        .admin-modal-header h2 {
+            font-size: 2em;
+            font-weight: 800;
+            color: #1a4a7a;
+            text-shadow: 3px 3px 0 #8ab3d4;
+            font-family: 'Nunito', sans-serif;
+        }
+        .admin-modal-close {
+            background: #e88080;
+            border: 3px solid #cc5a5a;
+            color: #ffffff;
+            font-size: 1.6em;
+            padding: 5px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 800;
+            box-shadow: 3px 3px 0 #cc5a5a;
+            font-family: 'Nunito', sans-serif;
+        }
+        .admin-modal-close:hover {
+            transform: scale(1.05);
+            box-shadow: 5px 5px 0 #cc5a5a;
+            background: #ee9090;
+        }
+
+        .confirm-content h2 {
+            font-size: 1.8em;
+            font-weight: 800;
+            color: #1a4a7a;
+            text-shadow: 3px 3px 0 #8ab3d4;
+            text-align: center;
+            margin-bottom: 10px;
+            font-family: 'Nunito', sans-serif;
+        }
+        .confirm-content p {
+            text-align: center;
+            opacity: 0.6;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+        }
+        .confirm-content input {
+            width: 100%;
+            padding: 16px 22px;
+            border-radius: 50px;
+            border: 3px solid #8ab3d4;
+            background: #e4eff9;
+            color: #1a2a3a;
+            font-size: 1em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            box-shadow: inset -4px -4px 8px rgba(0, 0, 0, 0.04), inset 4px 4px 8px rgba(255, 255, 255, 0.7);
+            transition: 0.3s;
+            font-family: 'Nunito', sans-serif;
+        }
+        .confirm-content input:focus {
+            outline: none;
+            border-color: #5b9bd5;
+            box-shadow: 0 0 0 4px rgba(91, 155, 213, 0.2), inset -4px -4px 8px rgba(0, 0, 0, 0.04), inset 4px 4px 8px rgba(255, 255, 255, 0.7);
+        }
+        .confirm-content .btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 1em;
+            border-radius: 50px;
+            margin-top: 5px;
+        }
+        .confirm-content .btn-secondary {
+            margin-top: 10px;
+        }
+        .confirm-content .error {
+            color: #ffffff;
+            text-align: center;
+            font-size: 0.9em;
+            min-height: 20px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            background: #e88080;
+            padding: 8px;
+            border-radius: 20px;
+            border: 2px solid #cc5a5a;
+            font-family: 'Nunito', sans-serif;
+            text-shadow: none;
+        }
+
+        /* ========== MODAL DE EDICIÓN ========== */
+        .edit-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(6px);
+            z-index: 100000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .edit-modal.active {
+            display: flex;
+            animation: clayFadeIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .edit-content {
+            background: #c4dcef;
+            border-radius: 50px 50px 50px 12px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 12px 12px 0 #8ab3d4, 20px 20px 60px rgba(0, 0, 0, 0.10), inset -4px -4px 10px rgba(0, 0, 0, 0.04), inset 4px 4px 10px rgba(255, 255, 255, 0.7);
+            border: 4px solid #8ab3d4;
+            transform: rotate(0.3deg);
+        }
+
+        .edit-content h2 {
+            font-size: 2em;
+            font-weight: 800;
+            color: #1a4a7a;
+            text-shadow: 3px 3px 0 #8ab3d4;
+            text-align: center;
+            margin-bottom: 5px;
+            font-family: 'Nunito', sans-serif;
+        }
+        .edit-content p {
+            text-align: center;
+            opacity: 0.5;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+        }
+        .edit-content textarea {
+            width: 100%;
+            padding: 16px 22px;
+            border-radius: 30px;
+            border: 3px solid #8ab3d4;
+            background: #e4eff9;
+            color: #1a2a3a;
+            font-size: 1em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            box-shadow: inset -4px -4px 8px rgba(0, 0, 0, 0.04), inset 4px 4px 8px rgba(255, 255, 255, 0.7);
+            transition: 0.3s;
+            font-family: 'Nunito', sans-serif;
+            resize: vertical;
+            min-height: 80px;
+            max-height: 300px;
+            line-height: 1.6;
+        }
+        .edit-content textarea:focus {
+            outline: none;
+            border-color: #5b9bd5;
+            box-shadow: 0 0 0 4px rgba(91, 155, 213, 0.2), inset -4px -4px 8px rgba(0, 0, 0, 0.04), inset 4px 4px 8px rgba(255, 255, 255, 0.7);
+        }
+        .edit-content .btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            margin-top: 5px;
+        }
+        .edit-content .btn-secondary {
+            margin-top: 10px;
+        }
+        .edit-content .error {
+            color: #ffffff;
+            text-align: center;
+            font-size: 0.9em;
+            min-height: 20px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            background: #e88080;
+            padding: 8px;
+            border-radius: 20px;
+            border: 2px solid #cc5a5a;
+            font-family: 'Nunito', sans-serif;
+            text-shadow: none;
+        }
+
+        /* ========== ADMIN ========== */
+        .admin-add-user {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .admin-add-user label {
+            font-weight: 700;
+            color: #1a4a7a;
+            font-size: 1.1em;
+            font-family: 'Nunito', sans-serif;
+        }
+        .admin-add-user input {
+            flex: 1;
+            padding: 16px 22px;
+            border-radius: 50px;
+            border: 3px solid #8ab3d4;
+            background: #e4eff9;
+            color: #1a2a3a;
+            font-size: 1em;
+            font-weight: 600;
+            min-width: 100px;
+            max-width: 120px;
+            box-shadow: inset -4px -4px 8px rgba(0, 0, 0, 0.04), inset 4px 4px 8px rgba(255, 255, 255, 0.7);
+            transition: 0.3s;
+            font-family: 'Nunito', sans-serif;
+        }
+        .admin-add-user input:focus {
+            outline: none;
+            border-color: #5b9bd5;
+            box-shadow: 0 0 0 4px rgba(91, 155, 213, 0.2), inset -4px -4px 8px rgba(0, 0, 0, 0.04), inset 4px 4px 8px rgba(255, 255, 255, 0.7);
+        }
+        .admin-controls {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+        .admin-controls .btn {
+            font-size: 0.85em;
+            padding: 12px 20px;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #e4eff9;
+            border-radius: 30px;
+            overflow: hidden;
+            border: 3px solid #8ab3d4;
+            margin-top: 15px;
+        }
+        .admin-table th,
+        .admin-table td {
+            padding: 14px 18px;
+            text-align: left;
+            border-bottom: 2px solid #8ab3d4;
+            font-family: 'Nunito', sans-serif;
+        }
+        .admin-table th {
+            background: #8ab3d4;
+            color: #1a2a3a;
+            font-weight: 800;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .admin-table tr:last-child td {
+            border-bottom: none;
+        }
+        .admin-table tr:hover td {
+            background: rgba(91, 155, 213, 0.12);
+        }
+        .admin-table .btn-sm {
+            padding: 6px 14px;
+            font-size: 0.8em;
+            border-radius: 30px;
+            border: 2px solid #8ab3d4;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 700;
+            background: #e4eff9;
+            color: #1a2a3a;
+            box-shadow: 3px 3px 0 #8ab3d4;
+            font-family: 'Nunito', sans-serif;
+        }
+        .admin-table .btn-sm:hover {
+            transform: translateY(-2px);
+            box-shadow: 5px 5px 0 #8ab3d4;
+        }
+        .btn-sm-danger {
+            border-color: #cc5a5a !important;
+            color: #8a2a2a !important;
+        }
+        .btn-sm-danger:hover {
+            background: #e88080 !important;
+            color: #ffffff !important;
+        }
+        .btn-sm-primary {
+            border-color: #5b9bd5 !important;
+            color: #1a4a7a !important;
+        }
+        .btn-sm-primary:hover {
+            background: #5b9bd5 !important;
+            color: #ffffff !important;
+        }
+        .btn-sm-success {
+            border-color: #3aaa92 !important;
+            color: #1a5a4a !important;
+        }
+        .btn-sm-success:hover {
+            background: #5bc8b0 !important;
+            color: #ffffff !important;
+        }
+        .btn-sm-warning {
+            border-color: #ccaa3a !important;
+            color: #5a4a1a !important;
+        }
+        .btn-sm-warning:hover {
+            background: #e8c85a !important;
+            color: #1a1a0a !important;
+        }
+
+        .password-cell {
+            font-family: monospace;
+            font-size: 0.8em;
+            background: #c4dcef;
+            padding: 4px 14px;
+            border-radius: 20px;
+            display: inline-block;
+            border: 2px solid #8ab3d4;
+        }
+        .status-badge {
+            font-size: 0.7em;
+            padding: 4px 16px;
+            border-radius: 30px;
+            display: inline-block;
+            font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+        }
+        .status-badge.registrado {
+            background: #5bc8b0;
+            color: #ffffff;
+            border: 2px solid #3aaa92;
+        }
+        .status-badge.pendiente {
+            background: #e8c85a;
+            color: #5a4a1a;
+            border: 2px solid #ccaa3a;
+        }
+        .status-badge.vacio {
+            background: #c8d0d8;
+            color: #2a3a4a;
+            border: 2px solid #a8b0b8;
+        }
+
+        /* ========== USER CARDS ========== */
+        .user-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        .user-card {
+            background: #e4eff9;
+            border: 3px solid #8ab3d4;
+            border-radius: 30px 30px 30px 8px;
+            padding: 25px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-size: 1em;
+            color: #1a2a3a;
+            box-shadow: 6px 6px 0 #8ab3d4, 10px 10px 30px rgba(0, 0, 0, 0.05);
+            font-family: 'Nunito', sans-serif;
+        }
+        .user-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 8px 8px 0 #8ab3d4, 15px 15px 40px rgba(0, 0, 0, 0.08);
+            border-color: #5b9bd5;
+        }
+        .user-card:active {
+            transform: scale(0.95);
+            box-shadow: 3px 3px 0 #8ab3d4;
+        }
+        .user-card .card-emoji {
+            font-size: 3.5em;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .user-card .card-status {
+            font-size: 0.8em;
+            opacity: 0.7;
+            margin-top: 4px;
+            font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+        }
+        .user-card .card-anterior {
+            font-size: 0.6em;
+            opacity: 0.5;
+            margin-top: 6px;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+            color: #5a4a1a;
+        }
+        .user-card.ocupado {
+            border-color: #3aaa92;
+            background: #c4dcef;
+        }
+        .user-card.ocupado .card-status {
+            color: #1a5a4a;
+            opacity: 1;
+        }
+        .user-card.vacio {
+            border-color: #ccaa3a;
+            border-style: dashed;
+        }
+        .user-card.vacio .card-status {
+            color: #5a4a1a;
+            opacity: 1;
+        }
+
+        /* ========== MODALES AUTH ========== */
+        .password-content h2,
+        .admin-login-content h2,
+        .user-login-content h2 {
+            font-size: 2.2em;
+            font-weight: 800;
+            color: #1a4a7a;
+            text-shadow: 3px 3px 0 #8ab3d4;
+            text-align: center;
+            margin-bottom: 5px;
+            font-family: 'Nunito', sans-serif;
+        }
+        .password-content .selected-card,
+        .user-login-content .selected-card {
+            text-align: center;
+            font-size: 1.2em;
+            opacity: 0.7;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+        }
+        .admin-login-content p {
+            text-align: center;
+            opacity: 0.5;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+        }
+        .password-content input,
+        .admin-login-content input,
+        .user-login-content input {
+            width: 100%;
+            padding: 16px 22px;
+            border-radius: 50px;
+            border: 3px solid #8ab3d4;
+            background: #e4eff9;
+            color: #1a2a3a;
+            font-size: 1em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            box-shadow: inset -4px -4px 8px rgba(0, 0, 0, 0.04), inset 4px 4px 8px rgba(255, 255, 255, 0.7);
+            transition: 0.3s;
+            font-family: 'Nunito', sans-serif;
+        }
+        .password-content input:focus,
+        .admin-login-content input:focus,
+        .user-login-content input:focus {
+            outline: none;
+            border-color: #5b9bd5;
+            box-shadow: 0 0 0 4px rgba(91, 155, 213, 0.2), inset -4px -4px 8px rgba(0, 0, 0, 0.04), inset 4px 4px 8px rgba(255, 255, 255, 0.7);
+        }
+        .password-content .btn,
+        .admin-login-content .btn,
+        .user-login-content .btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            margin-top: 5px;
+        }
+        .password-content .error,
+        .admin-login-content .error,
+        .user-login-content .error {
+            color: #ffffff;
+            text-align: center;
+            font-size: 0.9em;
+            min-height: 20px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            background: #e88080;
+            padding: 8px;
+            border-radius: 20px;
+            border: 2px solid #cc5a5a;
+            font-family: 'Nunito', sans-serif;
+            text-shadow: none;
+        }
+        .password-content .btn-secondary,
+        .user-login-content .btn-secondary {
+            margin-top: 10px;
+        }
+
+        /* ========== GAME AREA ========== */
+        .game-area {
+            display: none;
+        }
+        .game-area.active {
+            display: block;
+        }
+
+        .animals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .animal-card {
+            background: #e4eff9;
+            border-radius: 35px 35px 35px 10px;
+            padding: 25px;
+            border: 3px solid #8ab3d4;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 8px 8px 0 #8ab3d4, 12px 12px 30px rgba(0, 0, 0, 0.05);
+        }
+        .animal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 10px 10px 0 #8ab3d4, 18px 18px 40px rgba(0, 0, 0, 0.08);
+        }
+        .animal-card.mi-personaje {
+            border-color: #5b9bd5;
+            background: #c4dcef;
+            box-shadow: 8px 8px 0 #5b9bd5, 12px 12px 30px rgba(91, 155, 213, 0.15);
+        }
+        .animal-card.mi-personaje .animal-header {
+            border-bottom-color: #5b9bd5;
+        }
+
+        .animal-header {
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 4px dashed #8ab3d4;
+            margin-bottom: 15px;
+        }
+        .animal-emoji {
+            font-size: 4.5em;
+            display: block;
+            margin-bottom: 5px;
+            filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.05));
+        }
+        .animal-name {
+            font-size: 1.4em;
+            font-weight: 800;
+            margin: 5px 0;
+            color: #1a4a7a;
+            font-family: 'Nunito', sans-serif;
+        }
+        .animal-identity {
+            font-size: 0.8em;
+            opacity: 0.4;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+        }
+        .mi-personaje-label {
+            text-align: center;
+            color: #ffffff;
+            font-size: 0.85em;
+            font-weight: 800;
+            margin-bottom: 10px;
+            padding: 6px 16px;
+            background: #5b9bd5;
+            border-radius: 30px;
+            display: inline-block;
+            border: 2px solid #3d7bb5;
+            box-shadow: 3px 3px 0 #3d7bb5;
+            font-family: 'Nunito', sans-serif;
+        }
+        .mi-personaje-label-container {
+            text-align: center;
+        }
+
+        /* ========== COMIC BUBBLE ========== */
+        .comic-bubble-container {
+            margin: 18px 0;
+            background: #ffffff;
+            border-radius: 30px 30px 30px 6px;
+            padding: 20px;
+            color: #1a2a3a;
+            position: relative;
+            border: 3px solid #8ab3d4;
+            box-shadow: 6px 6px 0 #8ab3d4, inset -4px -4px 8px rgba(0, 0, 0, 0.03), inset 4px 4px 8px rgba(255, 255, 255, 0.7);
+        }
+        .comic-bubble-container::before {
+            content: '';
+            position: absolute;
+            bottom: -14px;
+            left: 25px;
+            border-width: 14px 14px 0 0;
+            border-style: solid;
+            border-color: #ffffff transparent transparent transparent;
+            filter: drop-shadow(-2px 2px 0 #8ab3d4);
+        }
+        .comic-message {
+            font-size: 1.05em;
+            word-break: break-word;
+            min-height: 30px;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+        .comic-time {
+            font-size: 0.6em;
+            opacity: 0.4;
+            text-align: right;
+            margin-top: 5px;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* ========== BATERÍA SOCIAL ========== */
+        .battery-social-container {
+            margin: 12px 0;
+            padding: 12px 14px;
+            background: rgba(0, 0, 0, 0.04);
+            border-radius: 16px;
+            border: 2px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .battery-social-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .battery-social-header .label {
+            font-size: 0.7em;
+            font-weight: 700;
+            opacity: 0.5;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .battery-social-header .level-text {
+            font-size: 0.8em;
+            font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .battery-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .battery-bar-fill {
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.5s ease;
+            width: 0%;
+            position: relative;
+        }
+
+        .battery-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, transparent 100%);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .battery-status-text {
+            font-size: 0.7em;
+            margin-top: 3px;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+            opacity: 0.7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .battery-status-text .emoji {
+            font-size: 1.1em;
+        }
+
+        .battery-edit {
+            display: none;
+            margin-top: 8px;
+            gap: 6px;
+            flex-direction: column;
+        }
+
+        .battery-edit.visible {
+            display: flex;
+        }
+
+        .battery-edit input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 5px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.08);
+            outline: none;
+            transition: background 0.2s;
+        }
+
+        .battery-edit input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #48dbfb, #0abde3);
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(72, 219, 251, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: 0.15s ease;
+        }
+
+        .battery-edit input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .battery-edit input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #48dbfb, #0abde3);
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .battery-edit .quick-presets {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .battery-edit .quick-presets button {
+            padding: 2px 8px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.5);
+            font-size: 0.6em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .battery-edit .quick-presets button:hover {
+            background: rgba(91, 155, 213, 0.15);
+            border-color: #5b9bd5;
+            transform: scale(1.05);
+        }
+
+        .battery-lock {
+            text-align: center;
+            font-size: 0.6em;
+            opacity: 0.3;
+            margin-top: 4px;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* ========== FRASE DE BURBUJA (SOLO DUEÑO) ========== */
+        .bubble-edit-area {
+            display: none;
+            margin: 12px 0 8px 0;
+        }
+        .bubble-edit-area.visible {
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+        }
+        .bubble-edit-area textarea {
+            width: 100%;
+            padding: 10px 18px;
+            border-radius: 30px;
+            border: 3px solid #8ab3d4;
+            background: #e4eff9;
+            color: #1a2a3a;
+            font-size: 0.9em;
+            font-weight: 600;
+            box-shadow: inset -4px -4px 8px rgba(0, 0, 0, 0.04), inset 4px 4px 8px rgba(255, 255, 255, 0.7);
+            transition: 0.3s;
+            font-family: 'Nunito', sans-serif;
+            resize: vertical;
+            min-height: 50px;
+            max-height: 150px;
+            line-height: 1.5;
+        }
+        .bubble-edit-area textarea:focus {
+            outline: none;
+            border-color: #5b9bd5;
+            box-shadow: 0 0 0 4px rgba(91, 155, 213, 0.2), inset -4px -4px 8px rgba(0, 0, 0, 0.04), inset 4px 4px 8px rgba(255, 255, 255, 0.7);
+        }
+        .bubble-edit-area button {
+            padding: 10px 22px;
+            border-radius: 50px;
+            border: 3px solid #8ab3d4;
+            background: #5b9bd5;
+            color: #ffffff;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-size: 0.9em;
+            box-shadow: 4px 4px 0 #3d7bb5;
+            font-family: 'Nunito', sans-serif;
+            white-space: nowrap;
+            align-self: flex-end;
+        }
+        .bubble-edit-area button:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 6px 6px 0 #3d7bb5;
+            background: #6aabdd;
+        }
+
+        /* ========== REACCIONES ESTILO FACEBOOK ========== */
+        .reactions-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .reactions-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            align-items: center;
+            min-height: 32px;
+            margin-top: 8px;
+            padding: 4px 0;
+        }
+
+        .reaction-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            background: #e4eff9;
+            border: 2px solid #8ab3d4;
+            border-radius: 20px;
+            padding: 2px 8px 2px 4px;
+            font-size: 0.85em;
+            cursor: default;
+            box-shadow: 2px 2px 0 #8ab3d4;
+            font-family: 'Nunito', sans-serif;
+            transition: all 0.2s;
+        }
+        .reaction-pill:hover {
+            transform: scale(1.05);
+            border-color: #5b9bd5;
+        }
+        .reaction-pill .reaction-emoji {
+            font-size: 1.2em;
+        }
+        .reaction-pill .reaction-count {
+            font-weight: 700;
+            font-size: 0.75em;
+            color: #1a4a7a;
+            min-width: 12px;
+            text-align: center;
+        }
+
+        .reaction-like-btn {
+            background: #e4eff9;
+            border: 2px solid #8ab3d4;
+            border-radius: 20px;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 2px 2px 0 #8ab3d4;
+            font-family: 'Nunito', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: #1a2a3a;
+            white-space: nowrap;
+        }
+        .reaction-like-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 4px 4px 0 #8ab3d4;
+            border-color: #5b9bd5;
+            background: #c4dcef;
+        }
+
+        .reaction-like-btn .like-icon {
+            font-size: 1.2em;
+        }
+        .reaction-like-btn .like-text {
+            font-weight: 600;
+            font-size: 0.8em;
+        }
+
+        .reactions-dropdown {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: calc(100% + 8px);
+            transform: translateY(-50%);
+            background: #ffffff;
+            border: 3px solid #8ab3d4;
+            border-radius: 20px;
+            padding: 10px;
+            box-shadow: 8px 8px 0 #8ab3d4, 12px 12px 30px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            background: #e4eff9;
+            min-width: 200px;
+            max-width: 280px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .reactions-dropdown::-webkit-scrollbar {
+            width: 6px;
+        }
+        .reactions-dropdown::-webkit-scrollbar-track {
+            background: #c4dcef;
+            border-radius: 10px;
+        }
+        .reactions-dropdown::-webkit-scrollbar-thumb {
+            background: #5b9bd5;
+            border-radius: 10px;
+            border: 1px solid #8ab3d4;
+        }
+
+        .reactions-dropdown.show {
+            display: block;
+            animation: dropdownSlideRight 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes dropdownSlideRight {
+            from {
+                opacity: 0;
+                transform: translateY(-50%) scale(0.9) translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(-50%) scale(1) translateX(0);
+            }
+        }
+
+        .reactions-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2px;
+            justify-items: center;
+        }
+
+        .reactions-dropdown .reaction-option {
+            background: transparent;
+            border: 2px solid transparent;
+            border-radius: 30px;
+            padding: 4px 6px;
+            cursor: pointer;
+            font-size: 1.6em;
+            transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+            line-height: 1.4;
+            font-family: 'Nunito', sans-serif;
+            width: 100%;
+            text-align: center;
+        }
+        .reactions-dropdown .reaction-option:hover {
+            transform: scale(1.2);
+            background: #c4dcef;
+            border-color: #8ab3d4;
+            border-radius: 30px;
+        }
+        .reactions-dropdown .reaction-option:active {
+            transform: scale(0.9);
+        }
+
+        .reaction-pill.user-reaction {
+            border-color: #5b9bd5;
+            background: #c4dcef;
+            box-shadow: 2px 2px 0 #3d7bb5;
+        }
+        .reaction-pill.user-reaction .reaction-count {
+            color: #1a4a7a;
+        }
+
+        /* ========== COMENTARIOS ========== */
+        .comic-comments {
+            margin-top: 15px;
+            padding-left: 18px;
+            border-left: 4px solid #5b9bd5;
+        }
+
+        .comic-comment {
+            background: #e4eff9;
+            border-radius: 20px 20px 20px 4px;
+            padding: 8px 16px;
+            margin: 5px 0;
+            font-size: 0.9em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #1a2a3a;
+            border: 2px solid #8ab3d4;
+            box-shadow: 3px 3px 0 #8ab3d4;
+            font-family: 'Nunito', sans-serif;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .comic-comment .comment-emoji {
+            font-size: 1em;
+            margin-right: 4px;
+        }
+        .comic-comment .comment-author-emoji {
+            font-size: 1.2em;
+            margin-right: 4px;
+        }
+        .comic-comment .comment-text {
+            flex: 1;
+            font-weight: 600;
+            min-width: 60px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+        .comic-comment .comment-time {
+            font-size: 0.6em;
+            opacity: 0.4;
+            margin-left: 10px;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+        }
+        .comic-comment .comment-actions {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+        .comic-comment .comment-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9em;
+            padding: 2px 6px;
+            font-weight: 700;
+            transition: 0.2s;
+            border-radius: 10px;
+            font-family: 'Nunito', sans-serif;
+        }
+        .comic-comment .comment-actions button:hover {
+            transform: scale(1.1);
+            background: rgba(0, 0, 0, 0.05);
+        }
+        .comment-edit-btn {
+            color: #5b9bd5;
+        }
+        .comment-edit-btn:hover {
+            color: #3a7bb5;
+        }
+        .comment-delete-btn {
+            color: #cc5a5a;
+        }
+        .comment-delete-btn:hover {
+            color: #aa3a3a;
+        }
+
+        /* ========== INPUT COMENTARIO ========== */
+        .comment-input-area {
+            display: none;
+            gap: 10px;
+            margin-top: 12px;
+            flex-direction: column;
+        }
+        .comment-input-area.visible {
+            display: flex;
+        }
+        .comment-input-area textarea {
+            width: 100%;
+            padding: 10px 18px;
+            border-radius: 30px;
+            border: 3px solid #8ab3d4;
+            background: #e4eff9;
+            color: #1a2a3a;
+            font-size: 0.9em;
+            font-weight: 600;
+            box-shadow: inset -4px -4px 8px rgba(0, 0, 0, 0.04), inset 4px 4px 8px rgba(255, 255, 255, 0.7);
+            transition: 0.3s;
+            font-family: 'Nunito', sans-serif;
+            resize: vertical;
+            min-height: 50px;
+            max-height: 150px;
+            line-height: 1.5;
+        }
+        .comment-input-area textarea:focus {
+            outline: none;
+            border-color: #5b9bd5;
+            box-shadow: 0 0 0 4px rgba(91, 155, 213, 0.2), inset -4px -4px 8px rgba(0, 0, 0, 0.04), inset 4px 4px 8px rgba(255, 255, 255, 0.7);
+        }
+        .comment-input-area button {
+            padding: 10px 22px;
+            border-radius: 50px;
+            border: 3px solid #8ab3d4;
+            background: #5b9bd5;
+            color: #ffffff;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-size: 0.9em;
+            box-shadow: 4px 4px 0 #3d7bb5;
+            font-family: 'Nunito', sans-serif;
+            align-self: flex-end;
+        }
+        .comment-input-area button:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 6px 6px 0 #3d7bb5;
+            background: #6aabdd;
+        }
+
+        .lock-label {
+            text-align: center;
+            opacity: 0.3;
+            font-size: 0.7em;
+            padding: 8px 0;
+            margin-top: 5px;
+            font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* ========== CHAT ========== */
+        .chat-section {
+            background: #e4eff9;
+            border-radius: 35px 35px 35px 10px;
+            padding: 22px;
+            margin-top: 25px;
+            max-height: 320px;
+            overflow-y: auto;
+            border: 3px solid #8ab3d4;
+            box-shadow: 8px 8px 0 #8ab3d4, 12px 12px 30px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+        .chat-section::-webkit-scrollbar {
+            width: 10px;
+        }
+        .chat-section::-webkit-scrollbar-track {
+            background: #8ab3d4;
+            border-radius: 20px;
+        }
+        .chat-section::-webkit-scrollbar-thumb {
+            background: #5b9bd5;
+            border-radius: 20px;
+            border: 2px solid #8ab3d4;
+        }
+
+        .chat-scroll-btn {
+            position: absolute;
+            bottom: 80px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #5b9bd5;
+            border: 3px solid #3d7bb5;
+            color: #ffffff;
+            font-size: 1.4em;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 #3d7bb5, 8px 8px 20px rgba(0, 0, 0, 0.12);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            font-family: 'Nunito', sans-serif;
+        }
+        .chat-scroll-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 6px 6px 0 #3d7bb5, 12px 12px 30px rgba(0, 0, 0, 0.15);
+            background: #6aabdd;
+        }
+        .chat-scroll-btn:active {
+            transform: scale(0.9);
+            box-shadow: 2px 2px 0 #3d7bb5;
+        }
+        .chat-scroll-btn.show {
+            display: flex;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 4px dashed #8ab3d4;
+        }
+        .chat-header h4 {
+            font-size: 1.4em;
+            font-weight: 800;
+            color: #1a4a7a;
+            text-shadow: 2px 2px 0 #8ab3d4;
+            font-family: 'Nunito', sans-serif;
+        }
+        .chat-header span {
+            font-size: 0.8em;
+            opacity: 0.4;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .chat-message {
+            padding: 12px 20px;
+            margin: 6px 0;
+            background: #c4dcef;
+            border-radius: 25px 25px 25px 4px;
+            border: 2px solid #8ab3d4;
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+            box-shadow: 3px 3px 0 #8ab3d4;
+            position: relative;
+            flex-wrap: wrap;
+        }
+        .chat-message .chat-emoji {
+            font-size: 1.4em;
+        }
+        .chat-message .chat-name {
+            font-weight: 800;
+            color: #1a4a7a;
+            font-size: 1em;
+            font-family: 'Nunito', sans-serif;
+        }
+        .chat-message .chat-text {
+            flex: 1;
+            word-break: break-word;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+        .chat-message .chat-time {
+            font-size: 0.7em;
+            opacity: 0.3;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+        }
+        .chat-message .chat-actions {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+        .chat-message .chat-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8em;
+            padding: 2px 6px;
+            font-weight: 700;
+            transition: 0.2s;
+            border-radius: 10px;
+            font-family: 'Nunito', sans-serif;
+        }
+        .chat-message .chat-actions button:hover {
+            transform: scale(1.1);
+            background: rgba(0, 0, 0, 0.05);
+        }
+        .chat-edit-btn {
+            color: #5b9bd5;
+        }
+        .chat-edit-btn:hover {
+            color: #3a7bb5;
+        }
+        .chat-delete-btn {
+            color: #cc5a5a;
+        }
+        .chat-delete-btn:hover {
+            color: #aa3a3a;
+        }
+
+        .typing-indicator {
+            display: none;
+            font-size: 0.85em;
+            opacity: 0.7;
+            padding: 8px 18px;
+            background: #e8c85a;
+            border-radius: 30px;
+            margin-top: 8px;
+            font-weight: 700;
+            color: #5a4a1a;
+            border: 2px solid #ccaa3a;
+            box-shadow: 3px 3px 0 #ccaa3a;
+            animation: clayPulse 1.5s ease-in-out infinite;
+            font-family: 'Nunito', sans-serif;
+        }
+        .typing-indicator.show {
+            display: block;
+        }
+
+        /* ========== CHAT INPUT AREA - CON TEXTAREA ADAPTABLE ========== */
+        .chat-input-area {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+            align-items: flex-end;
+        }
+        .chat-input-area textarea {
+            flex: 1;
+            padding: 14px 22px;
+            border-radius: 50px;
+            border: 3px solid #8ab3d4;
+            background: #e4eff9;
+            color: #1a2a3a;
+            font-size: 0.95em;
+            font-weight: 600;
+            box-shadow: inset -4px -4px 8px rgba(0, 0, 0, 0.04), inset 4px 4px 8px rgba(255, 255, 255, 0.7);
+            transition: 0.3s;
+            font-family: 'Nunito', sans-serif;
+            resize: none;
+            min-height: 50px;
+            max-height: 150px;
+            line-height: 1.5;
+            overflow-y: auto;
+        }
+        .chat-input-area textarea:focus {
+            outline: none;
+            border-color: #5b9bd5;
+            box-shadow: 0 0 0 4px rgba(91, 155, 213, 0.2), inset -4px -4px 8px rgba(0, 0, 0, 0.04), inset 4px 4px 8px rgba(255, 255, 255, 0.7);
+        }
+        .chat-input-area textarea::placeholder {
+            color: #8a9aaa;
+            font-weight: 600;
+        }
+        .chat-input-area button {
+            padding: 14px 30px;
+            border-radius: 50px;
+            border: 3px solid #8ab3d4;
+            background: #5b9bd5;
+            color: #ffffff;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-size: 0.95em;
+            box-shadow: 4px 4px 0 #3d7bb5;
+            font-family: 'Nunito', sans-serif;
+            white-space: nowrap;
+            height: 50px;
+            min-height: 50px;
+        }
+        .chat-input-area button:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 6px 6px 0 #3d7bb5;
+            background: #6aabdd;
+        }
+
+        /* ========== STATS ========== */
+        .stats {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            padding: 18px 25px;
+            background: #e4eff9;
+            border-radius: 40px 40px 40px 8px;
+            border: 3px solid #8ab3d4;
+            box-shadow: 6px 6px 0 #8ab3d4, 10px 10px 30px rgba(0, 0, 0, 0.05);
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9em;
+            font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+        }
+        .stat-item .stat-number {
+            font-weight: 900;
+            color: #1a4a7a;
+            font-size: 1.4em;
+            text-shadow: 2px 2px 0 #8ab3d4;
+        }
+
+        /* ========== WAITING AREA ========== */
+        .waiting-area {
+            display: none;
+            text-align: center;
+            padding: 60px 30px;
+            background: #e4eff9;
+            border-radius: 50px 50px 50px 12px;
+            border: 4px solid #8ab3d4;
+            margin: 40px 0;
+            box-shadow: 12px 12px 0 #8ab3d4, 20px 20px 60px rgba(0, 0, 0, 0.06);
+        }
+        .waiting-area .big-icon {
+            font-size: 5em;
+            display: block;
+            margin-bottom: 20px;
+            filter: drop-shadow(6px 6px 0 rgba(0, 0, 0, 0.05));
+        }
+        .waiting-area h2 {
+            font-size: 2.8em;
+            font-weight: 800;
+            color: #1a4a7a;
+            text-shadow: 4px 4px 0 #8ab3d4;
+            margin-bottom: 10px;
+            font-family: 'Nunito', sans-serif;
+        }
+        .waiting-area p {
+            opacity: 0.6;
+            font-size: 1.1em;
+            max-width: 500px;
+            margin: 0 auto;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* ========== TOAST ========== */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #e4eff9;
+            border: 4px solid #5b9bd5;
+            border-radius: 40px 40px 40px 8px;
+            padding: 18px 35px;
+            color: #1a2a3a;
+            font-size: 1em;
+            z-index: 9999999 !important;
+            display: none;
+            text-align: center;
+            max-width: 90%;
+            font-weight: 700;
+            box-shadow: 8px 8px 0 #3d7bb5, 16px 16px 50px rgba(0, 0, 0, 0.15);
+            animation: toastSlideDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-family: 'Nunito', sans-serif;
+            min-width: 200px;
+            background: #c4dcef;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        .toast .toast-emoji {
+            margin-right: 12px;
+            font-size: 1.3em;
+        }
+
+        @keyframes toastSlideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0) scale(1);
+            }
+        }
+
+        .toast.toast-success {
+            border-color: #3aaa92;
+            background: #5bc8b0;
+            color: #ffffff;
+            box-shadow: 8px 8px 0 #2a8a7a, 16px 16px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .toast.toast-error {
+            border-color: #cc5a5a;
+            background: #e88080;
+            color: #ffffff;
+            box-shadow: 8px 8px 0 #aa4a4a, 16px 16px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .toast.toast-warning {
+            border-color: #ccaa3a;
+            background: #e8c85a;
+            color: #5a4a1a;
+            box-shadow: 8px 8px 0 #aa8a2a, 16px 16px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 10px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 18px 22px;
+                border-radius: 30px;
+            }
+            .header h1 {
+                font-size: 1.8em;
+            }
+            .animals-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+            .admin-modal-content,
+            .user-select-content,
+            .password-content,
+            .admin-login-content,
+            .user-login-content,
+            .confirm-content,
+            .edit-content {
+                padding: 25px;
+                margin: 10px;
+                border-radius: 35px;
+            }
+            .admin-float-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 1.8em;
+                bottom: 20px;
+                right: 20px;
+            }
+            .stats {
+                gap: 15px;
+                font-size: 0.8em;
+                padding: 15px 20px;
+                border-radius: 30px;
+            }
+            .chat-section {
+                max-height: 220px;
+                padding: 16px;
+                border-radius: 30px;
+            }
+            .chat-scroll-btn {
+                bottom: 70px;
+                right: 10px;
+                width: 38px;
+                height: 38px;
+                font-size: 1.2em;
+            }
+            .admin-table {
+                font-size: 0.75em;
+                border-radius: 20px;
+            }
+            .admin-table td,
+            .admin-table th {
+                padding: 8px 10px;
+            }
+            .user-cards {
+                grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+                gap: 15px;
+            }
+            .waiting-area {
+                padding: 40px 20px;
+                border-radius: 40px;
+            }
+            .waiting-area .big-icon {
+                font-size: 3.5em;
+            }
+            .waiting-area h2 {
+                font-size: 2em;
+            }
+            .toast {
+                top: 10px;
+                padding: 12px 20px;
+                font-size: 0.9em;
+                max-width: 95%;
+                min-width: auto;
+            }
+            .animal-card {
+                padding: 18px;
+                border-radius: 30px;
+            }
+            .animal-emoji {
+                font-size: 3.2em;
+            }
+            .animal-name {
+                font-size: 1.2em;
+            }
+            .comic-message {
+                font-size: 0.95em;
+            }
+            .user-card {
+                padding: 18px 12px;
+                border-radius: 25px;
+            }
+            .user-card .card-emoji {
+                font-size: 2.8em;
+            }
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.85em;
+            }
+            .chat-input-area {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .chat-input-area textarea {
+                min-height: 40px;
+                max-height: 120px;
+                border-radius: 30px;
+            }
+            .chat-input-area button {
+                width: 100%;
+                height: 45px;
+                min-height: 45px;
+            }
+            .comment-input-area {
+                flex-direction: column;
+            }
+            .comment-input-area button {
+                width: 100%;
+                align-self: center;
+            }
+            .comment-input-area textarea {
+                min-height: 40px;
+                max-height: 120px;
+            }
+            .bubble-edit-area {
+                flex-direction: column;
+            }
+            .bubble-edit-area button {
+                width: 100%;
+                align-self: center;
+            }
+            .admin-controls .btn {
+                font-size: 0.75em;
+                padding: 10px 16px;
+            }
+            .admin-add-user input {
+                font-size: 0.85em;
+                padding: 12px 16px;
+            }
+            .admin-add-user .btn {
+                font-size: 0.8em;
+                padding: 12px 18px;
+            }
+            .reactions-dropdown {
+                position: fixed;
+                bottom: 80px;
+                left: 50%;
+                transform: translateX(-50%) !important;
+                top: auto !important;
+                max-height: 150px;
+                min-width: 160px;
+                max-width: 200px;
+            }
+            .reactions-dropdown.show {
+                transform: translateX(-50%) !important;
+            }
+            @keyframes dropdownSlideRight {
+                from {
+                    opacity: 0;
+                    transform: translateX(-50%) scale(0.9) translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(-50%) scale(1) translateY(0);
+                }
+            }
+            .chat-message {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .chat-message .chat-actions {
+                margin-left: auto;
+            }
+            .comic-comment {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .battery-social-container {
+                padding: 10px 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.4em;
+            }
+            .header .subtitle {
+                font-size: 0.7em;
+            }
+            .header-right {
+                width: 100%;
+            }
+            .user-info {
+                font-size: 0.75em;
+                padding: 8px 16px;
+                width: 100%;
+                text-align: center;
+            }
+            .header-right .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .admin-modal-header h2 {
+                font-size: 1.4em;
+            }
+            .password-content h2,
+            .admin-login-content h2,
+            .user-login-content h2 {
+                font-size: 1.6em;
+            }
+            .stats {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .admin-table {
+                font-size: 0.65em;
+            }
+            .admin-table th,
+            .admin-table td {
+                padding: 6px 8px;
+            }
+            .toast {
+                font-size: 0.8em;
+                padding: 10px 16px;
+                top: 8px;
+            }
+            .edit-content textarea {
+                min-height: 60px;
+                max-height: 200px;
+            }
+            .bubble-edit-area textarea {
+                min-height: 40px;
+                max-height: 120px;
+            }
+            .comment-input-area textarea {
+                min-height: 40px;
+                max-height: 120px;
+            }
+            .chat-input-area textarea {
+                min-height: 35px;
+                max-height: 100px;
+            }
+            .chat-scroll-btn {
+                bottom: 60px;
+                right: 8px;
+                width: 34px;
+                height: 34px;
+                font-size: 1em;
+            }
+            .battery-social-container {
+                padding: 8px 10px;
+            }
+            .battery-social-header .label {
+                font-size: 0.6em;
+            }
+            .battery-social-header .level-text {
+                font-size: 0.7em;
+            }
+            .battery-bar {
+                height: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+
+        <!-- HEADER -->
+        <div class="header">
+            <div class="header-left">
+                <h1>
+                    <span class="icon">👥</span> Faceless
+                </h1>
+                <span class="subtitle">👁️‍🗨️ Guarda mi Secreto</span>
+            </div>
+            <div class="header-right">
+                <span class="user-info" id="userInfo">👤 No autenticado</span>
+                <button class="btn btn-secondary" id="logoutBtn">🚪 Salir</button>
+            </div>
+        </div>
+
+        <!-- ÁREA DE ESPERA -->
+        <div class="waiting-area" id="waitingArea">
+            <span class="big-icon">⏳</span>
+            <h2>Esperando al Administrador</h2>
+            <p>El administrador debe definir cuántas tarjetas habrá e iniciar el juego.</p>
+            <p style="font-size:0.8em;margin-top:15px;opacity:0.3;">Haz clic en el botón ⚙️ abajo a la derecha para acceder al panel.</p>
+        </div>
+
+        <!-- ÁREA DE JUEGO -->
+        <div class="game-area" id="gameArea">
+            <div class="animals-grid" id="animalsGrid"></div>
+
+            <div class="chat-section" id="chatSection">
+                <div class="chat-header">
+                    <h4>💬 Chat</h4>
+                    <span id="chatStatus">Mensajes globales</span>
+                </div>
+                <div id="chatMessages"></div>
+                <button class="chat-scroll-btn" id="chatScrollBtn" title="Ir al mensaje más reciente">⬇️</button>
+                <div class="typing-indicator" id="typingIndicator">✏️ Alguien está escribiendo...</div>
+                <div class="chat-input-area">
+                    <textarea id="chatInput" placeholder="Escribe un mensaje..." maxlength="500" rows="1"></textarea>
+                    <button id="sendChatBtn">📨 Enviar</button>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">👥 Jugadores: <span class="stat-number" id="playerCount">0</span></div>
+                <div class="stat-item">💬 Mensajes: <span class="stat-number" id="messageCount">0</span></div>
+                <div class="stat-item">🔄 Redistribuciones: <span class="stat-number" id="redistributionCount">0</span></div>
+            </div>
+        </div>
+
+        <!-- MODALES -->
+        <div class="user-select-modal" id="userSelectModal">
+            <div class="user-select-content">
+                <h2>🎴 Elige tu Tarjeta</h2>
+                <p style="text-align:center;opacity:0.5;margin-bottom:25px;font-weight:600;">Selecciona una tarjeta disponible</p>
+                <div class="user-cards" id="userCards"></div>
+                <p style="text-align:center;font-size:0.8em;opacity:0.3;margin-top:15px;font-weight:600;">Las tarjetas con "?" están disponibles</p>
+            </div>
+        </div>
+
+        <div class="password-modal" id="passwordModal">
+            <div class="password-content">
+                <h2>📝 Registrarse</h2>
+                <p class="selected-card" id="selectedCardInfo">Tarjeta: <strong></strong></p>
+                <div class="error" id="passwordError"></div>
+                <input type="text" id="nameInput" placeholder="Tu nombre" maxlength="20">
+                <input type="password" id="passwordInput" placeholder="Contraseña (mínimo 8 caracteres)" maxlength="30">
+                <input type="password" id="passwordConfirmInput" placeholder="Confirmar contraseña" maxlength="30">
+                <button class="btn btn-primary" id="passwordConfirmBtn">✅ Registrarse</button>
+            </div>
+        </div>
+
+        <div class="user-login-modal" id="userLoginModal">
+            <div class="user-login-content">
+                <h2>🔐 Iniciar Sesión</h2>
+                <p class="selected-card" id="loginCardInfo">Tarjeta: <strong></strong></p>
+                <div class="error" id="loginError"></div>
+                <input type="password" id="loginPasswordInput" placeholder="Contraseña" maxlength="30">
+                <button class="btn btn-primary" id="loginConfirmBtn">🔑 Ingresar</button>
+                <button class="btn btn-secondary" id="loginCancelBtn">Cancelar</button>
+            </div>
+        </div>
+
+        <div class="admin-login-modal" id="adminLoginModal">
+            <div class="admin-login-content">
+                <h2>🔐 Acceso Administrador</h2>
+                <p>Ingresa la contraseña para acceder al panel</p>
+                <div class="error" id="adminLoginError"></div>
+                <input type="password" id="adminPasswordInput" placeholder="Contraseña..." maxlength="30">
+                <button class="btn btn-primary" id="adminLoginBtn">🔑 Acceder</button>
+                <button class="btn btn-secondary" id="adminLoginCancelBtn">Cancelar</button>
+            </div>
+        </div>
+
+        <!-- MODAL DE EDICIÓN -->
+        <div class="edit-modal" id="editModal">
+            <div class="edit-content">
+                <h2>✏️ Editar</h2>
+                <p id="editModalDesc">Modifica el texto</p>
+                <div class="error" id="editError"></div>
+                <textarea id="editTextarea" rows="3" maxlength="500"></textarea>
+                <button class="btn btn-primary" id="editSaveBtn">💾 Guardar</button>
+                <button class="btn btn-secondary" id="editCancelBtn">Cancelar</button>
+            </div>
+        </div>
+
+        <!-- BOTÓN ADMIN -->
+        <button class="admin-float-btn" id="adminFloatBtn">⚙️</button>
+
+        <!-- MODAL ADMIN -->
+        <div class="admin-modal" id="adminModal">
+            <div class="admin-modal-content">
+                <div class="admin-modal-header">
+                    <h2>⚙️ Panel de Administrador</h2>
+                    <button class="admin-modal-close" id="adminModalClose">✕</button>
+                </div>
+                <div id="adminPanelContent">
+                    <div class="admin-add-user">
+                        <label>🎴 Tarjetas:</label>
+                        <input type="number" id="adminCardCount" value="1" min="1" max="20">
+                        <button class="btn btn-success" id="adminSetCardsBtn">✅ Establecer</button>
+                        <button class="btn btn-glow" id="adminStartGameBtn">🎮 Iniciar Juego</button>
+                    </div>
+                    <div class="admin-controls">
+                        <button class="btn btn-primary" id="adminRedistributeBtn">🔄 Redistribuir</button>
+                        <button class="btn btn-warning" id="adminRevealBtn">🎭 Revelar</button>
+                        <button class="btn btn-secondary" id="adminHideBtn">🔒 Ocultar</button>
+                        <button class="btn btn-danger" id="adminResetBtn">🗑️ Reiniciar</button>
+                    </div>
+                    <h4 style="color:#1a4a7a;font-size:1.4em;margin:20px 0 10px;font-weight:800;">📋 Tarjetas</h4>
+                    <p style="font-size:0.8em;opacity:0.5;margin-bottom:15px;font-weight:600;">
+                        <span style="color:#5a4a1a;">❓ Vacía</span> = Sin registrar &nbsp;|&nbsp;
+                        <span style="color:#1a5a4a;">✅ Ocupada</span> = Registrada
+                    </p>
+                    <div style="overflow-x:auto;">
+                        <table class="admin-table" id="adminTable">
+                            <thead>
+                                <tr><th>#</th><th>Nombre</th><th>Animal</th><th>Contraseña</th><th>Estado</th><th>Acciones</th></tr>
+                            </thead>
+                            <tbody id="adminTableBody"></tbody>
+                        </table>
+                    </div>
+                    <p style="font-size:0.7em;opacity:0.2;text-align:center;margin-top:20px;font-weight:600;">🔒 El administrador puede ver y restablecer contraseñas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL DE CONFIRMACIÓN - COLOCADO DESPUÉS DEL PANEL ADMIN PARA QUE QUEDE ENCIMA -->
+        <div class="confirm-modal" id="confirmModal">
+            <div class="confirm-content">
+                <h2>🔐 Confirmar</h2>
+                <p>Ingresa la contraseña de administrador para continuar</p>
+                <div class="error" id="confirmError"></div>
+                <input type="password" id="confirmPasswordInput" placeholder="Contraseña..." maxlength="30">
+                <button class="btn btn-primary" id="confirmBtn">✅ Confirmar</button>
+                <button class="btn btn-secondary" id="confirmCancelBtn">Cancelar</button>
+            </div>
+        </div>
+
+        <!-- TOAST -->
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  CONFIGURACIÓN SUPABASE
+        // ============================================================
+        const SUPABASE_URL = 'https://aovueeolzsqwjomdxsyz.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFvdnVlZW9senNxd2pvbWR4c3l6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0MzY1NjIsImV4cCI6MjA5OTAxMjU2Mn0.IHJAlUw6bAX2diZxaaqirosmqcWt3rPd1ZphbR0i8sw';
+
+        let supabaseClient;
+        try {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            console.log('✅ Supabase conectado');
+        } catch (e) {
+            console.error('❌ Error al conectar Supabase:', e);
+            alert('Error al conectar con la base de datos.');
+        }
+
+        // ============================================================
+        //  ANIMALES
+        // ============================================================
+        const ANIMALES = [
+            { emoji: '🦁', nombre: 'León' }, { emoji: '🐘', nombre: 'Elefante' },
+            { emoji: '🦊', nombre: 'Zorro' }, { emoji: '🐼', nombre: 'Panda' },
+            { emoji: '🦄', nombre: 'Unicornio' }, { emoji: '🐉', nombre: 'Dragón' },
+            { emoji: '🦅', nombre: 'Águila' }, { emoji: '🐺', nombre: 'Lobo' },
+            { emoji: '🦝', nombre: 'Mapache' }, { emoji: '🐨', nombre: 'Koala' },
+            { emoji: '🦦', nombre: 'Nutria' }, { emoji: '🐬', nombre: 'Delfín' },
+            { emoji: '🦒', nombre: 'Jirafa' }, { emoji: '🐧', nombre: 'Pingüino' },
+            { emoji: '🦇', nombre: 'Murciélago' }, { emoji: '🦩', nombre: 'Flamenco' },
+            { emoji: '🦍', nombre: 'Gorila' }, { emoji: '🐿️', nombre: 'Ardilla' },
+            { emoji: '🦚', nombre: 'Pavo Real' }, { emoji: '🦧', nombre: 'Orangután' }
+        ];
+
+        // ============================================================
+        //  MENSAJES DE BATERÍA SOCIAL
+        // ============================================================
+        const BATTERY_MESSAGES = [
+            { min: 100, max: 100, emoji: '⚡', estado: 'Energía Explosiva',
+                msg: '¡Batería al 100%! Energía infinita, creatividad y carisma en su punto máximo.',
+                advice: '💬 ¡Es el momento de brillar! Invítame a eventos, proyectos o aventuras. Estoy imparable y listo para todo.' },
+            { min: 90, max: 99, emoji: '⚡', estado: 'Casi al Máximo',
+                msg: 'Energía casi al tope. Mi mejor versión está lista para socializar y crear.',
+                advice: '💬 Momento ideal para conectar. Estoy súper receptivo, con ganas de planes grandes y conversaciones épicas.' },
+            { min: 80, max: 89, emoji: '🌟', estado: 'Excelente Energía',
+                msg: 'Me siento genial. Tengo buena disposición para interactuar y disfrutar.',
+                advice: '💬 ¡Disfruta el momento! Soy buena compañía, pero no abuses de mi energía. Aún necesito mantener el ritmo.' },
+            { min: 70, max: 79, emoji: '😊', estado: 'Muy Buena',
+                msg: 'Energía saludable. Socializo bien y tengo buen humor.',
+                advice: '💬 Aprovecha mi buena onda, pero evita extender demasiado las interacciones. Un buen plan con pausas es perfecto.' },
+            { min: 60, max: 69, emoji: '🙂', estado: 'Buena',
+                msg: 'Nivel positivo. Disfruto socializar pero empiezo a notar algo de cansancio.',
+                advice: '💬 Conversaciones ligeras y divertidas. Soy buen compañero, pero no fuerces temas muy profundos ahora.' },
+            { min: 50, max: 59, emoji: '😐', estado: 'Media-Baja',
+                msg: 'Energía a la mitad. Socializo pero necesito pausas frecuentes.',
+                advice: '💬 Ve con calma. Soy buena compañía pero necesito espacios para respirar. Mejor algo tranquilo y sin presión.' },
+            { min: 40, max: 49, emoji: '😕', estado: 'Baja',
+                msg: 'Batería baja. Prefiero interacciones breves y tranquilas.',
+                advice: '💬 Sé amable y directo. Aprecio tu compañía, pero necesito que las conversaciones sean cortas. Un café rápido o un saludo cálido es perfecto.' },
+            { min: 30, max: 39, emoji: '😟', estado: 'Crítica',
+                msg: 'Energía crítica. Necesito silencio y espacio personal urgente.',
+                advice: '💬 Por favor, sé breve. No es personal, solo necesito recargar. Un mensaje corto o un gesto amable sin exigir conversación es lo mejor.' },
+            { min: 20, max: 29, emoji: '🪫', estado: 'Muy Baja',
+                msg: 'Muy bajo. Evita interacciones innecesarias.',
+                advice: '💬 Respeta mi espacio. No estoy en mi mejor momento. Si necesitas algo, sé breve y directo. Aprecio tu comprensión.' },
+            { min: 10, max: 19, emoji: '🔋', estado: 'Casi Agotado',
+                msg: 'Casi sin energía. Silencio y soledad por favor.',
+                advice: '💬 Por favor, dame tiempo. Estoy en modo recarga. Si es urgente, sé claro y conciso. Valoro tu paciencia.' },
+            { min: 0, max: 9, emoji: '💀', estado: 'Agotado Total',
+                msg: 'Completamente agotado. Necesito aislamiento total.',
+                advice: '💬 Por favor, respeta mi silencio. No es contra ti, es que necesito recargar completamente. Cuando esté mejor, te buscaré. Gracias por entender.' }
+        ];
+
+        function getBatteryMessage(level) {
+            for (const m of BATTERY_MESSAGES) {
+                if (level >= m.min && level <= m.max) return m;
+            }
+            return BATTERY_MESSAGES[0];
+        }
+
+        function getBatteryColor(level) {
+            const hue = Math.max(0, (level / 100) * 120);
+            return `hsl(${hue}, 85%, 50%)`;
+        }
+
+        // ============================================================
+        //  ESTADO
+        // ============================================================
+        let state = {
+            players: [],
+            chatMessages: [],
+            redistributions: 0,
+            isGameStarted: false,
+            revealIdentities: false,
+            currentUser: null,
+            usedAnimals: [],
+            isTyping: {},
+            reactionsDropdownOpen: false
+        };
+
+        let selectedCardId = null;
+        let loginUserId = null;
+        let typingTimeout = null;
+        let isChatInputFocused = false;
+        let isUpdating = false;
+        let isUserTyping = false;
+
+        // Variable para guardar valores de inputs que no deben sobrescribirse
+        let inputValuesBackup = {};
+
+        // Variables para confirmación de eliminación
+        let confirmAction = null;
+        let confirmData = null;
+
+        // Variables para edición
+        let editAction = null;
+        let editData = null;
+
+        // Variable para controlar si hay un dropdown abierto
+        let dropdownOpen = false;
+
+        // ============================================================
+        //  DOM REFS
+        // ============================================================
+        const dom = {
+            gameArea: document.getElementById('gameArea'),
+            waitingArea: document.getElementById('waitingArea'),
+            animalsGrid: document.getElementById('animalsGrid'),
+            chatMessages: document.getElementById('chatMessages'),
+            chatSection: document.getElementById('chatSection'),
+            chatInput: document.getElementById('chatInput'),
+            sendChatBtn: document.getElementById('sendChatBtn'),
+            chatScrollBtn: document.getElementById('chatScrollBtn'),
+            playerCount: document.getElementById('playerCount'),
+            messageCount: document.getElementById('messageCount'),
+            redistributionCount: document.getElementById('redistributionCount'),
+            userInfo: document.getElementById('userInfo'),
+            logoutBtn: document.getElementById('logoutBtn'),
+            typingIndicator: document.getElementById('typingIndicator'),
+            chatStatus: document.getElementById('chatStatus'),
+            userSelectModal: document.getElementById('userSelectModal'),
+            userCards: document.getElementById('userCards'),
+            passwordModal: document.getElementById('passwordModal'),
+            selectedCardInfo: document.getElementById('selectedCardInfo'),
+            nameInput: document.getElementById('nameInput'),
+            passwordInput: document.getElementById('passwordInput'),
+            passwordConfirmInput: document.getElementById('passwordConfirmInput'),
+            passwordConfirmBtn: document.getElementById('passwordConfirmBtn'),
+            passwordError: document.getElementById('passwordError'),
+            userLoginModal: document.getElementById('userLoginModal'),
+            loginCardInfo: document.getElementById('loginCardInfo'),
+            loginPasswordInput: document.getElementById('loginPasswordInput'),
+            loginConfirmBtn: document.getElementById('loginConfirmBtn'),
+            loginCancelBtn: document.getElementById('loginCancelBtn'),
+            loginError: document.getElementById('loginError'),
+            adminLoginModal: document.getElementById('adminLoginModal'),
+            adminPasswordInput: document.getElementById('adminPasswordInput'),
+            adminLoginBtn: document.getElementById('adminLoginBtn'),
+            adminLoginCancelBtn: document.getElementById('adminLoginCancelBtn'),
+            adminLoginError: document.getElementById('adminLoginError'),
+            adminFloatBtn: document.getElementById('adminFloatBtn'),
+            adminModal: document.getElementById('adminModal'),
+            adminModalClose: document.getElementById('adminModalClose'),
+            adminTableBody: document.getElementById('adminTableBody'),
+            adminCardCount: document.getElementById('adminCardCount'),
+            adminSetCardsBtn: document.getElementById('adminSetCardsBtn'),
+            adminStartGameBtn: document.getElementById('adminStartGameBtn'),
+            adminRedistributeBtn: document.getElementById('adminRedistributeBtn'),
+            adminRevealBtn: document.getElementById('adminRevealBtn'),
+            adminHideBtn: document.getElementById('adminHideBtn'),
+            adminResetBtn: document.getElementById('adminResetBtn'),
+            toast: document.getElementById('toast'),
+            confirmModal: document.getElementById('confirmModal'),
+            confirmPasswordInput: document.getElementById('confirmPasswordInput'),
+            confirmBtn: document.getElementById('confirmBtn'),
+            confirmCancelBtn: document.getElementById('confirmCancelBtn'),
+            confirmError: document.getElementById('confirmError'),
+            editModal: document.getElementById('editModal'),
+            editTextarea: document.getElementById('editTextarea'),
+            editSaveBtn: document.getElementById('editSaveBtn'),
+            editCancelBtn: document.getElementById('editCancelBtn'),
+            editError: document.getElementById('editError'),
+            editModalDesc: document.getElementById('editModalDesc'),
+        };
+
+        // ============================================================
+        //  EMOJIS PARA REACCIONES - ORGANIZADOS POR SECCIONES
+        // ============================================================
+        const REACTION_SECTIONS = [{
+            title: '❤️ Corazones',
+            emojis: ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔', '❤️‍🔥', '❤️‍🩹', '💕', '💞', '💓', '💗', '💖', '💘', '💝', '💟', '❣️']
+        }, {
+            title: '😊 Caras y emociones',
+            emojis: ['😀', '😁', '😂', '🤣', '😃', '😄', '😅', '😆', '😉', '😊', '😋', '😎', '😍', '🥰', '😘', '😗', '😙', '😚', '🥲', '😜', '😝', '😛', '🤑', '🤪', '🤨', '🧐', '🤓', '😞', '😟', '😤', '😢', '😭', '😦', '😧', '😨', '😩', '😪', '😫', '😬', '😮', '😯', '😰', '😱', '😲', '😳', '😵', '😡', '😠', '🤬', '🤯', '😇', '🤠', '🤡', '🤥', '🤫', '🤭', '🤗', '🤔', '😐', '😑', '😶', '🫥', '😏', '😒', '🙄', '😌', '😔', '🤤', '😴', '😷', '🤒', '🤕', '🤢', '🤮', '🥴', '🤧', '🥵', '🥶', '🥹', '🫨']
+        }, {
+            title: '🤚 Gestos con manos',
+            emojis: ['👋', '🤚', '🖐️', '✋', '🖖', '👌', '🤌', '🤏', '✌️', '🤞', '🤟', '🤘', '🤙', '👈', '👉', '👆', '🖕', '👇', '☝️', '👍', '👎', '✊', '👊', '🤛', '🤜', '👏', '🙌', '👐', '🤲', '🙏', '✍️', '🤳', '💪', '🦾', '🦿', '🦵', '🦶', '👂', '🦻', '👃', '🧠', '🫀', '🫁', '🦷', '🦴', '👀', '👁️', '👅', '👄', '🫦', '🫲', '🫱', '🫳', '🫴', '🫵', '🫶', '🫰']
+        }, {
+            title: '🐾 Animales',
+            emojis: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐽', '🐸', '🐵', '🐔', '🐧', '🐦', '🐤', '🐣', '🐥', '🦆', '🦢', '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🪱', '🐛', '🦋', '🐌', '🐞', '🐜', '🪰', '🪲', '🪳', '🐢', '🐍', '🦎', '🦖', '🦕', '🐙', '🦑', '🪸', '🐠', '🐟', '🐡', '🦈', '🐬', '🐳', '🐋', '🐊', '🫎', '🫏', '🪿', '🪼', '🪽', '🐦‍⬛', '🪺', '🪹']
+        }, {
+            title: '🍕 Comida y bebida',
+            emojis: ['🍎', '🍏', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥬', '🥒', '🌶️', '🫑', '🌽', '🥕', '🧄', '🧅', '🥔', '🍠', '🥐', '🥖', '🫓', '🥨', '🥯', '🥞', '🧇', '🧀', '🍖', '🍗', '🥩', '🥓', '🍔', '🍟', '🍕', '🌭', '🥪', '🌮', '🌯', '🫔', '🥙', '🧆', '🥚', '🍳', '🥘', '🍲', '🫕', '🥣', '🥗', '🍿', '🧈', '🧂', '🥫', '🍱', '🍘', '🍙', '🍚', '🍛', '🍜', '🍝', '🍢', '🍣', '🍤', '🍥', '🥮', '🍡', '🥟', '🥠', '🥡', '🍦', '🍧', '🍨', '🍩', '🍪', '🎂', '🍰', '🧁', '🥧', '🍫', '🍬', '🍭', '🍮', '🍯', '☕', '🍵', '🍶', '🍾', '🍷', '🍸', '🍹', '🍺', '🍻', '🥂', '🥃', '🥤', '🧃', '🧉', '🧊', '🫚', '🫛', '🫘', '🫗', '🫙']
+        }, {
+            title: '🎁 Objetos',
+            emojis: ['🎈', '🎉', '🎊', '🎀', '🎁', '🎃', '🎄', '🎆', '🎇', '✨', '🎋', '🎍', '🎎', '🎏', '🎐', '🎑', '🎒', '🎓', '👑', '💍', '💎', '📿', '🔮', '🪄', '🧿', '🪬', '🪭', '🪮', '🪯']
+        }, {
+            title: '⚽ Deportes',
+            emojis: ['⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🥏', '🎱', '🏓', '🏸', '🏒', '🏑', '🥍', '🏏', '⛳', '🏹', '🎣', '🥊', '🥋', '🎽', '🛹', '🛼', '🎿', '⛷️', '🏂', '🏋️', '🤼', '🤸', '🤹', '🧘', '🛀', '🧖']
+        }, {
+            title: '🚗 Viajes',
+            emojis: ['🚗', '🚕', '🚙', '🚌', '🚎', '🚓', '🚑', '🚒', '🚐', '🚚', '🚛', '🚜', '🏎️', '🏍️', '🛵', '🦽', '🦼', '🛴', '🚲', '🚨', '🚔', '🚍', '🚘', '🚖', '🚡', '🚠', '🚟', '🚃', '🚋', '🚝', '🚄', '🚅', '🚈', '🚂', '🚆', '🚇', '🚊', '🚉', '✈️', '🛫', '🛬', '🛩️', '💺', '🛰️', '🚀', '🛸', '⛵', '🛥️', '🚤', '🛳️', '⛴️', '🚢', '⚓', '⛽', '🚧', '🗺️', '🧭', '🧳']
+        }, {
+            title: '🌤️ Clima',
+            emojis: ['☀️', '🌤️', '⛅', '🌥️', '☁️', '🌦️', '🌧️', '⛈️', '🌨️', '❄️', '☃️', '⛄', '🌩️', '🌪️', '🌫️', '🌬️', '🌈', '☔', '☂️', '⛱️', '💧', '💦', '☄️', '🌠', '🌌', '🌍', '🌎', '🌏', '🌐', '🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘', '🌙', '🌚', '🌛', '🌜', '🌟', '⭐', '🌞']
+        }, {
+            title: '🔴 Símbolos',
+            emojis: ['🔴', '🟠', '🟡', '🟢', '🔵', '🟣', '🟤', '⚪', '⚫', '🟥', '🟧', '🟨', '🟩', '🟦', '🟪', '🟫', '⬛', '⬜', '◼️', '◻️', '◾', '◽', '▪️', '▫️', '🔺', '🔻', '💠', '🔶', '🔷', '🔸', '🔹']
+        }, {
+            title: '🔢 Números y letras',
+            emojis: ['0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟', '🔠', '🔡', '🔢', '🔣', '🔤', '🅰️', '🆎', '🅱️', '🆑', '🆒', '🆓', 'ℹ️', '🆔', 'Ⓜ️', '🆕', '🆖', '🆗', '🆘', '🆙', '🆚']
+        }, {
+            title: '🏳️ Banderas',
+            emojis: ['🏳️', '🏴', '🏁', '🚩', '🏳️‍🌈', '🏳️‍⚧️']
+        }, {
+            title: '💀 Varios',
+            emojis: ['💀', '☠️', '💩', '👹', '👺', '👻', '👽', '👾', '🤖']
+        }];
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        let toastTimeout = null;
+
+        function showToast(message, emoji = '✅', type = 'success') {
+            const toast = dom.toast;
+            toast.className = 'toast';
+            if (type === 'success') toast.classList.add('toast-success');
+            else if (type === 'error') toast.classList.add('toast-error');
+            else if (type === 'warning') toast.classList.add('toast-warning');
+
+            toast.innerHTML = `<span class="toast-emoji">${emoji}</span> ${message}`;
+            toast.classList.add('show');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
+        // ============================================================
+        //  FUNCIONES AUXILIARES
+        // ============================================================
+        function getRandomAnimal() {
+            const disponibles = ANIMALES.filter(a => !state.usedAnimals.some(u => u.emoji === a.emoji));
+            if (disponibles.length === 0) { state.usedAnimals = []; return getRandomAnimal(); }
+            const animal = disponibles[Math.floor(Math.random() * disponibles.length)];
+            state.usedAnimals.push(animal);
+            return animal;
+        }
+
+        function formatTime() { return new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }); }
+
+        // ============================================================
+        //  DETECTAR SI EL USUARIO ESTÁ ESCRIBIENDO
+        // ============================================================
+        function checkIfUserIsTyping() {
+            const inputs = document.querySelectorAll('input, textarea');
+            for (const input of inputs) {
+                if (input.matches(':focus')) {
+                    isUserTyping = true;
+                    return true;
+                }
+            }
+            isUserTyping = false;
+            return false;
+        }
+
+        document.addEventListener('focusin', function(e) {
+            if (e.target.matches('input, textarea')) {
+                isUserTyping = true;
+            }
+        });
+
+        document.addEventListener('focusout', function(e) {
+            if (e.target.matches('input, textarea')) {
+                setTimeout(() => {
+                    checkIfUserIsTyping();
+                }, 100);
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.target.matches('input, textarea')) {
+                isUserTyping = true;
+                clearTimeout(window.typingTimer);
+                window.typingTimer = setTimeout(() => {
+                    checkIfUserIsTyping();
+                }, 1000);
+            }
+        });
+
+        // ============================================================
+        //  GUARDAR Y RESTAURAR INPUTS
+        // ============================================================
+        function saveInputValues() {
+            document.querySelectorAll('[data-action="comment-input"]').forEach(input => {
+                const playerId = input.dataset.player;
+                inputValuesBackup[`comment_${playerId}`] = input.value;
+            });
+        }
+
+        function restoreInputValues() {
+            document.querySelectorAll('[data-action="comment-input"]').forEach(input => {
+                const playerId = input.dataset.player;
+                if (!input.matches(':focus') && inputValuesBackup[`comment_${playerId}`] !== undefined) {
+                    input.value = inputValuesBackup[`comment_${playerId}`];
+                }
+            });
+        }
+
+        function clearInputBackup(key) {
+            delete inputValuesBackup[key];
+        }
+
+        // ============================================================
+        //  SUPABASE - OPERACIONES
+        // ============================================================
+        async function loadData() {
+            try {
+                if (!supabaseClient) return false;
+                const { data: players, error: pError } = await supabaseClient.from('jugadores').select('*').order('id');
+                if (pError) { console.error('Error cargando jugadores:', pError); throw pError; }
+                state.players = (players || []).map(p => ({
+                    id: p.id,
+                    nombre: p.nombre || '',
+                    password: p.password || '',
+                    animal: p.animal_emoji ? { emoji: p.animal_emoji, nombre: p.animal_nombre } : null,
+                    animal_anterior: p.animal_anterior || null,
+                    mensaje: p.mensaje || '',
+                    comentarios: p.comentarios || [],
+                    reacciones: p.reacciones || {},
+                    bateria_social: p.bateria_social !== undefined && p.bateria_social !== null ? p.bateria_social :
+                        100,
+                    registrado: !!p.password && p.password.length > 0 && !!p.nombre
+                }));
+
+                const { data: messages, error: mError } = await supabaseClient.from('mensajes').select('*').order(
+                    'creado', { ascending: true }).limit(50);
+                if (mError) console.error('Error cargando mensajes:', mError);
+                state.chatMessages = (messages || []).map(m => ({
+                    id: m.id,
+                    animalId: m.jugador_id,
+                    texto: m.texto,
+                    timestamp: m.creado ? formatTime() : formatTime(),
+                    creado: m.creado
+                }));
+
+                const { data: stats, error: sError } = await supabaseClient.from('estadisticas').select(
+                    'redistribuciones').limit(1);
+                if (sError) console.error('Error cargando estadísticas:', sError);
+                state.redistributions = stats && stats.length > 0 ? stats[0].redistribuciones : 0;
+
+                const { data: configData } = await supabaseClient.from('configuracion').select('juego_iniciado').eq(
+                    'id', 1).maybeSingle();
+                if (configData) { state.isGameStarted = configData.juego_iniciado || false; } else {
+                    const algunRegistrado = state.players.some(p => p.registrado);
+                    const algunConAnimal = state.players.some(p => p.animal !== null);
+                    state.isGameStarted = algunRegistrado || algunConAnimal;
+                }
+                state.usedAnimals = state.players.filter(p => p.animal).map(p => p.animal);
+                return true;
+            } catch (error) { console.error('Error cargando datos:', error); return false; }
+        }
+
+        // ============================================================
+        //  ACTUALIZACIÓN AUTOMÁTICA CADA 5 SEGUNDOS
+        // ============================================================
+        let autoUpdateInterval = null;
+
+        async function autoUpdate() {
+            // Si hay un dropdown abierto, NO actualizar
+            if (dropdownOpen) {
+                console.log('⏸️ Auto-actualización pausada (dropdown abierto)');
+                return;
+            }
+            if (isUserTyping) {
+                return;
+            }
+            if (isUpdating) return;
+            isUpdating = true;
+
+            saveInputValues();
+            await loadData();
+            renderAll();
+            restoreInputValues();
+
+            isUpdating = false;
+        }
+
+        function startAutoUpdate() {
+            if (autoUpdateInterval) clearInterval(autoUpdateInterval);
+            autoUpdateInterval = setInterval(autoUpdate, 5000);
+            console.log('🔄 Auto-actualización iniciada (cada 5 segundos, pausa cuando escribes o dropdown abierto)');
+        }
+
+        function stopAutoUpdate() {
+            if (autoUpdateInterval) {
+                clearInterval(autoUpdateInterval);
+                autoUpdateInterval = null;
+                console.log('🔄 Auto-actualización detenida');
+            }
+        }
+
+        // ============================================================
+        //  FUNCIONES DE REGISTRO Y LOGIN
+        // ============================================================
+        async function registerUser(cardId, nombre, password) {
+            try {
+                if (!supabaseClient) return false;
+                const animal = getRandomAnimal();
+                const { error } = await supabaseClient.from('jugadores').update({
+                    nombre: nombre,
+                    password: password,
+                    animal_emoji: animal.emoji,
+                    animal_nombre: animal.nombre,
+                    animal_anterior: null,
+                    mensaje: '',
+                    comentarios: [],
+                    reacciones: {},
+                    bateria_social: 100
+                }).eq('id', cardId);
+                if (error) throw error;
+                await loadData();
+                const user = state.players.find(p => p.id === cardId);
+                if (user) {
+                    state.currentUser = { id: user.id, nombre: user.nombre, password: user.password, animal: user
+                            .animal, animal_anterior: null, bateria_social: user.bateria_social || 100 };
+                    localStorage.setItem('session', JSON.stringify({ userId: user.id, nombre: user.nombre }));
+                }
+                showToast(`¡${nombre} registrado! Animal: ${animal.emoji}`, '🎉', 'success');
+                return true;
+            } catch (error) { console.error('Error registrando usuario:', error); return false; }
+        }
+
+        async function loginUser(userId, password) {
+            try {
+                const user = state.players.find(p => p.id === userId);
+                if (!user) { dom.loginError.textContent = '❌ Usuario no encontrado'; return false; }
+                if (!user.password || user.password !== password) { dom.loginError.textContent =
+                        '❌ Contraseña incorrecta'; return false; }
+                state.currentUser = { id: user.id, nombre: user.nombre, password: user.password, animal: user.animal,
+                    animal_anterior: user.animal_anterior, bateria_social: user.bateria_social || 100 };
+                localStorage.setItem('session', JSON.stringify({ userId: user.id, nombre: user.nombre }));
+                dom.userLoginModal.classList.remove('active');
+                dom.userSelectModal.classList.remove('active');
+                dom.gameArea.classList.add('active');
+                dom.waitingArea.style.display = 'none';
+                renderAll();
+                showToast(`Bienvenido ${user.nombre}`, '👋', 'success');
+                return true;
+            } catch (error) { console.error('Error en login:', error); dom.loginError.textContent =
+                    '❌ Error al iniciar sesión'; return false; }
+        }
+
+        async function setCardCount(count) {
+            try {
+                if (!supabaseClient) return false;
+
+                const { data: current } = await supabaseClient.from('jugadores').select('id').order('id');
+                const currentCount = current ? current.length : 0;
+
+                if (count > currentCount) {
+                    for (let i = currentCount; i < count; i++) {
+                        await supabaseClient.from('jugadores').insert([{
+                            nombre: '',
+                            password: '',
+                            animal_emoji: null,
+                            animal_nombre: null,
+                            animal_anterior: null,
+                            mensaje: '',
+                            comentarios: [],
+                            reacciones: {},
+                            bateria_social: 100
+                        }]);
+                    }
+                } else if (count < currentCount) {
+                    const { data: toDelete } = await supabaseClient
+                        .from('jugadores')
+                        .select('id, nombre, password')
+                        .order('id', { ascending: false })
+                        .limit(currentCount - count);
+
+                    if (toDelete) {
+                        for (const item of toDelete) {
+                            if (!item.password || item.password.length === 0 || !item.nombre) {
+                                await supabaseClient.from('jugadores').delete().eq('id', item.id);
+                            } else {
+                                showToast(`No se puede eliminar la tarjeta de ${item.nombre} porque ya está registrada`,
+                                    '⚠️', 'warning');
+                            }
+                        }
+                    }
+                }
+
+                await loadData();
+                renderAll();
+                showToast(`🎴 ${count} tarjetas configuradas`, '✅', 'success');
+                return true;
+            } catch (error) { console.error('Error configurando tarjetas:', error); showToast('Error al configurar',
+                    '❌', 'error'); return false; }
+        }
+
+        async function redistributeAllAnimals() {
+            try {
+                if (!supabaseClient) return false;
+                state.usedAnimals = [];
+                const updates = state.players.map(player => {
+                    if (player.registrado) {
+                        const animal_anterior = player.animal ? { emoji: player.animal.emoji, nombre: player.animal
+                                .nombre } : null;
+                        const animal = getRandomAnimal();
+                        return {
+                            id: player.id,
+                            animal_emoji: animal.emoji,
+                            animal_nombre: animal.nombre,
+                            animal_anterior: animal_anterior,
+                            mensaje: '',
+                            comentarios: [],
+                            reacciones: {}
+                        };
+                    } else {
+                        return {
+                            id: player.id,
+                            animal_emoji: null,
+                            animal_nombre: null,
+                            animal_anterior: null,
+                            mensaje: '',
+                            comentarios: [],
+                            reacciones: {}
+                        };
+                    }
+                });
+                for (const update of updates) {
+                    await supabaseClient.from('jugadores').update({
+                        animal_emoji: update.animal_emoji,
+                        animal_nombre: update.animal_nombre,
+                        animal_anterior: update.animal_anterior,
+                        mensaje: '',
+                        comentarios: [],
+                        reacciones: {}
+                    }).eq('id', update.id);
+                }
+                state.redistributions++;
+                await supabaseClient.from('estadisticas').upsert({ id: 1, redistribuciones: state.redistributions });
+                await loadData();
+                renderAll();
+                showToast('¡Animales redistribuidos!', '🔄', 'success');
+                return true;
+            } catch (error) { console.error('Error redistribuyendo:', error); showToast('Error al redistribuir',
+                    '❌', 'error'); return false; }
+        }
+
+        // ============================================================
+        //  FUNCIÓN UPDATE PLAYER - CORREGIDA PARA GUARDAR BATERÍA
+        // ============================================================
+        async function updatePlayer(playerId, data) {
+            try {
+                if (!supabaseClient) return false;
+                if (data.comentarios !== undefined && !Array.isArray(data.comentarios)) data.comentarios = [];
+                if (data.reacciones !== undefined && typeof data.reacciones !== 'object') data.reacciones = {};
+                // Construir objeto de actualización solo con los campos presentes
+                const updateData = {};
+                if (data.comentarios !== undefined) updateData.comentarios = data.comentarios;
+                if (data.reacciones !== undefined) updateData.reacciones = data.reacciones;
+                if (data.mensaje !== undefined) updateData.mensaje = data.mensaje;
+                if (data.animal_emoji !== undefined) updateData.animal_emoji = data.animal_emoji;
+                if (data.animal_nombre !== undefined) updateData.animal_nombre = data.animal_nombre;
+                if (data.animal_anterior !== undefined) updateData.animal_anterior = data.animal_anterior;
+                if (data.nombre !== undefined) updateData.nombre = data.nombre;
+                if (data.password !== undefined) updateData.password = data.password;
+                if (data.bateria_social !== undefined) updateData.bateria_social = data.bateria_social;
+
+                const { error } = await supabaseClient.from('jugadores').update(updateData).eq('id', playerId);
+                if (error) throw error;
+                return true;
+            } catch (error) { console.error('Error actualizando:', error); return false; }
+        }
+
+        async function deleteMessage(msgId) {
+            try {
+                if (!supabaseClient) return false;
+                const { error } = await supabaseClient.from('mensajes').delete().eq('id', msgId);
+                if (error) throw error;
+                return true;
+            } catch (error) { console.error('Error eliminando mensaje:', error); return false; }
+        }
+
+        async function updateMessage(msgId, texto) {
+            try {
+                if (!supabaseClient) return false;
+                const { error } = await supabaseClient.from('mensajes').update({ texto: texto }).eq('id', msgId);
+                if (error) throw error;
+                return true;
+            } catch (error) { console.error('Error actualizando mensaje:', error); return false; }
+        }
+
+        async function resetUserPassword(playerId) {
+            try {
+                if (!supabaseClient) return false;
+                const player = state.players.find(p => p.id === playerId);
+                if (!player) return false;
+                await supabaseClient.from('jugadores').update({
+                    nombre: '',
+                    password: '',
+                    animal_emoji: null,
+                    animal_nombre: null,
+                    animal_anterior: null,
+                    mensaje: '',
+                    comentarios: [],
+                    reacciones: {},
+                    bateria_social: 100
+                }).eq('id', playerId);
+                if (state.currentUser && state.currentUser.id === playerId) {
+                    localStorage.removeItem('session');
+                    state.currentUser = null;
+                }
+                await loadData();
+                renderAll();
+                showToast(`Tarjeta liberada`, '🔑', 'success');
+                return true;
+            } catch (error) { console.error('Error resetando:', error); showToast('Error al resetear', '❌',
+                    'error'); return false; }
+        }
+
+        // ============================================================
+        //  FUNCIÓN ELIMINAR TARJETA
+        // ============================================================
+        async function deletePlayer(playerId) {
+            try {
+                if (!supabaseClient) return false;
+
+                if (state.currentUser && state.currentUser.id === playerId) {
+                    showToast('No puedes eliminar tu propia tarjeta', '⚠️', 'warning');
+                    return false;
+                }
+
+                const player = state.players.find(p => p.id === playerId);
+                if (!player) {
+                    showToast('Jugador no encontrado', '❌', 'error');
+                    return false;
+                }
+
+                const currentUserId = state.currentUser ? state.currentUser.id : null;
+
+                const { error } = await supabaseClient.from('jugadores').delete().eq('id', playerId);
+                if (error) throw error;
+
+                showToast(`Tarjeta de "${player.nombre || 'sin nombre'}" eliminada`, '🗑️', 'success');
+
+                await loadData();
+
+                if (currentUserId === playerId) {
+                    localStorage.removeItem('session');
+                    state.currentUser = null;
+                    setTimeout(() => {
+                        location.reload();
+                    }, 500);
+                }
+
+                renderAll();
+                return true;
+
+            } catch (error) {
+                console.error('Error eliminando jugador:', error);
+                showToast('Error al eliminar: ' + error.message, '❌', 'error');
+                return false;
+            }
+        }
+
+        async function resetGame() {
+            if (!confirm('¿Seguro que quieres reiniciar todo? Esto cerrará todas las sesiones abiertas.')) return;
+            try {
+                if (!supabaseClient) return;
+                await supabaseClient.from('mensajes').delete().neq('id', 0);
+                await supabaseClient.from('jugadores').update({
+                    nombre: '',
+                    password: '',
+                    animal_emoji: null,
+                    animal_nombre: null,
+                    animal_anterior: null,
+                    mensaje: '',
+                    comentarios: [],
+                    reacciones: {},
+                    bateria_social: 100
+                }).neq('id', 0);
+                await supabaseClient.from('estadisticas').upsert({ id: 1, redistribuciones: 0 });
+                await supabaseClient.from('configuracion').upsert({ id: 1, juego_iniciado: false });
+                state.usedAnimals = [];
+                state.isGameStarted = false;
+
+                localStorage.removeItem('session');
+                state.currentUser = null;
+
+                await loadData();
+                renderAll();
+                showToast('Juego reiniciado - Todas las sesiones cerradas', '🔄', 'success');
+                return true;
+            } catch (error) { console.error('Error reseteando:', error); showToast('Error al reiniciar', '❌',
+                    'error'); return false; }
+        }
+
+        async function saveMessage(jugadorId, texto) {
+            try {
+                if (!supabaseClient) return false;
+                const { error } = await supabaseClient.from('mensajes').insert([{
+                    jugador_id: jugadorId,
+                    texto: texto,
+                    creado: new Date().toISOString()
+                }]);
+                if (error) throw error;
+                return true;
+            } catch (error) { console.error('Error guardando mensaje:', error); return false; }
+        }
+
+        // ============================================================
+        //  FUNCIÓN PARA CREAR LA COLUMNA BATERIA_SOCIAL EN SUPABASE
+        // ============================================================
+        async function ensureBatteryColumn() {
+            try {
+                if (!supabaseClient) return;
+
+                const { data, error } = await supabaseClient.from('jugadores').select('bateria_social').limit(1);
+
+                if (error) {
+                    console.log('⚠️ La columna bateria_social no existe, intentando crearla...');
+
+                    try {
+                        await supabaseClient.query(`
+                            DO $$
+                            BEGIN
+                                IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='jugadores' AND column_name='bateria_social') THEN
+                                    ALTER TABLE jugadores ADD COLUMN bateria_social INTEGER DEFAULT 100;
+                                END IF;
+                            END $$;
+                        `);
+                        console.log('✅ Columna bateria_social creada exitosamente');
+                    } catch (e) {
+                        console.error('❌ Error al crear columna con query:', e);
+                        showToast('⚠️ La columna bateria_social no existe. Contacta al administrador.', '⚠️',
+                            'warning');
+                    }
+                } else {
+                    console.log('✅ La columna bateria_social ya existe');
+                }
+            } catch (e) {
+                console.error('❌ Error verificando columna bateria_social:', e);
+            }
+        }
+
+        // ============================================================
+        //  TYPING INDICATOR
+        // ============================================================
+        let typingChannel = null;
+
+        function setupTypingRealtime() {
+            if (!supabaseClient) return;
+            typingChannel = supabaseClient.channel('typing-channel');
+            typingChannel.on('broadcast', { event: 'typing' }, ({ payload }) => {
+                const { userId, userName, isTyping, animalEmoji } = payload;
+                if (state.currentUser && userId === state.currentUser.id) return;
+                if (isTyping) { state.isTyping[userId] = { userName, animalEmoji, timestamp: Date.now() }; } else {
+                    delete state.isTyping[userId]; }
+                updateTypingIndicator();
+            }).subscribe();
+        }
+
+        function updateTypingIndicator() {
+            const typingUsers = Object.values(state.isTyping);
+            const now = Date.now();
+            Object.keys(state.isTyping).forEach(key => {
+                if (now - state.isTyping[key].timestamp > 3000) delete state.isTyping[key];
+            });
+            if (typingUsers.length === 0) { dom.typingIndicator.classList.remove('show'); return; }
+            const names = typingUsers.map(u => `${u.animalEmoji || '👤'} ${u.userName}`).join(', ');
+            dom.typingIndicator.textContent = `✏️ ${names} ${typingUsers.length === 1 ? 'está' : 'están'} escribiendo...`;
+            dom.typingIndicator.classList.add('show');
+        }
+
+        setInterval(() => {
+            const now = Date.now();
+            let changed = false;
+            Object.keys(state.isTyping).forEach(key => {
+                if (now - state.isTyping[key].timestamp > 3000) { delete state.isTyping[key];
+                    changed = true; }
+            });
+            if (changed) updateTypingIndicator();
+        }, 2000);
+
+        async function sendTypingIndicator(isTyping) {
+            if (!state.currentUser || !typingChannel) return;
+            try {
+                await typingChannel.send({
+                    type: 'broadcast',
+                    event: 'typing',
+                    payload: {
+                        userId: state.currentUser.id,
+                        userName: state.currentUser.nombre,
+                        animalEmoji: state.currentUser.animal?.emoji || '👤',
+                        isTyping: isTyping
+                    }
+                });
+            } catch (e) {}
+        }
+
+        // ============================================================
+        //  CONFIRMACIÓN PARA ELIMINAR (ADMIN)
+        // ============================================================
+        function showConfirmModal(action, data) {
+            confirmAction = action;
+            confirmData = data;
+            dom.confirmModal.classList.add('active');
+            dom.confirmPasswordInput.value = '';
+            dom.confirmError.textContent = '';
+            dom.confirmPasswordInput.focus();
+        }
+
+        function closeConfirmModal() {
+            dom.confirmModal.classList.remove('active');
+            dom.confirmPasswordInput.value = '';
+            dom.confirmError.textContent = '';
+            confirmAction = null;
+            confirmData = null;
+        }
+
+        async function handleConfirm() {
+            const password = dom.confirmPasswordInput.value.trim();
+            if (password !== 'Bxtmxn') {
+                dom.confirmError.textContent = '❌ Contraseña incorrecta';
+                dom.confirmPasswordInput.value = '';
+                dom.confirmPasswordInput.focus();
+                return;
+            }
+
+            dom.confirmError.textContent = '';
+
+            if (confirmAction === 'delete-comment') {
+                const { playerId, commentId } = confirmData;
+                const player = state.players.find(p => p.id === playerId);
+                if (player) {
+                    const comentarios = player.comentarios || [];
+                    const nuevos = comentarios.filter(c => c.id !== commentId);
+                    await updatePlayer(playerId, { comentarios: nuevos });
+                    showToast('Comentario eliminado', '🗑️', 'success');
+                    await loadData();
+                    renderAll();
+                    restoreInputValues();
+                }
+            } else if (confirmAction === 'delete-chat') {
+                const { msgId } = confirmData;
+                const success = await deleteMessage(msgId);
+                if (success) {
+                    showToast('Mensaje eliminado', '🗑️', 'success');
+                    await loadData();
+                    renderAll();
+                    restoreInputValues();
+                }
+            } else if (confirmAction === 'admin-delete-player') {
+                const { playerId } = confirmData;
+                await deletePlayer(playerId);
+                closeConfirmModal();
+                await loadData();
+                renderAll();
+                if (!state.currentUser) {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                }
+                return;
+            }
+
+            closeConfirmModal();
+        }
+
+        // ============================================================
+        //  MODAL DE EDICIÓN
+        // ============================================================
+        function showEditModal(action, data, currentText, description) {
+            editAction = action;
+            editData = data;
+            dom.editModalDesc.textContent = description || 'Modifica el texto';
+            dom.editTextarea.value = currentText || '';
+            dom.editError.textContent = '';
+            dom.editModal.classList.add('active');
+            dom.editTextarea.focus();
+            setTimeout(() => {
+                dom.editTextarea.style.height = 'auto';
+                dom.editTextarea.style.height = Math.min(dom.editTextarea.scrollHeight, 300) + 'px';
+            }, 100);
+        }
+
+        function closeEditModal() {
+            dom.editModal.classList.remove('active');
+            dom.editTextarea.value = '';
+            dom.editError.textContent = '';
+            editAction = null;
+            editData = null;
+        }
+
+        dom.editTextarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 300) + 'px';
+        });
+
+        async function handleEditSave() {
+            const newText = dom.editTextarea.value.trim();
+            if (!newText) {
+                dom.editError.textContent = '❌ El texto no puede estar vacío';
+                return;
+            }
+
+            if (editAction === 'edit-comment') {
+                const { playerId, commentId } = editData;
+                const player = state.players.find(p => p.id === playerId);
+                if (player) {
+                    const comentarios = player.comentarios || [];
+                    const index = comentarios.findIndex(c => c.id === commentId);
+                    if (index !== -1) {
+                        const autorId = comentarios[index].autorId;
+                        if (state.currentUser && state.currentUser.id === autorId) {
+                            comentarios[index].texto = newText;
+                            await updatePlayer(playerId, { comentarios: comentarios });
+                            showToast('Comentario actualizado', '✏️', 'success');
+                            closeEditModal();
+                            await loadData();
+                            renderAll();
+                            restoreInputValues();
+                        } else {
+                            dom.editError.textContent = '❌ No puedes editar este comentario';
+                        }
+                    }
+                }
+            } else if (editAction === 'edit-chat') {
+                const { msgId } = editData;
+                const msg = state.chatMessages.find(m => m.id === msgId);
+                if (msg && state.currentUser && state.currentUser.id === msg.animalId) {
+                    await updateMessage(msgId, newText);
+                    showToast('Mensaje actualizado', '✏️', 'success');
+                    closeEditModal();
+                    await loadData();
+                    renderAll();
+                    restoreInputValues();
+                }
+            }
+        }
+
+        // ============================================================
+        //  RENDER
+        // ============================================================
+        function renderAll() {
+            renderGame();
+            renderChat();
+            renderStats();
+            renderAdminTable();
+            renderUserCards();
+            updateUserInfo();
+            checkAuthState();
+            setupChatEvents();
+            setupChatScroll();
+            setupBatteryEvents();
+        }
+
+        function updateUserInfo() {
+            if (state.currentUser && state.currentUser.animal) {
+                dom.userInfo.textContent = `👤 ${state.currentUser.nombre} → ${state.currentUser.animal.emoji}`;
+            } else if (state.currentUser) {
+                dom.userInfo.textContent = `👤 ${state.currentUser.nombre} (sin animal)`;
+            } else {
+                dom.userInfo.textContent = '👤 No autenticado';
+            }
+        }
+
+        function checkAuthState() {
+            if (!state.isGameStarted) {
+                dom.waitingArea.style.display = 'block';
+                dom.gameArea.classList.remove('active');
+                dom.userSelectModal.classList.remove('active');
+                dom.passwordModal.classList.remove('active');
+                dom.userLoginModal.classList.remove('active');
+                return;
+            }
+
+            if (state.currentUser) {
+                const userInDb = state.players.find(p => p.id === state.currentUser.id);
+                if (!userInDb || !userInDb.animal || !userInDb.nombre || !userInDb.registrado) {
+                    localStorage.removeItem('session');
+                    state.currentUser = null;
+                    dom.waitingArea.style.display = 'none';
+                    dom.gameArea.classList.remove('active');
+                    dom.userSelectModal.classList.add('active');
+                    dom.passwordModal.classList.remove('active');
+                    dom.userLoginModal.classList.remove('active');
+                    return;
+                }
+            }
+
+            if (state.currentUser && state.isGameStarted) {
+                dom.waitingArea.style.display = 'none';
+                dom.gameArea.classList.add('active');
+                dom.userSelectModal.classList.remove('active');
+                dom.passwordModal.classList.remove('active');
+                dom.userLoginModal.classList.remove('active');
+                return;
+            }
+
+            if (state.isGameStarted && !state.currentUser) {
+                dom.waitingArea.style.display = 'none';
+                dom.userSelectModal.classList.add('active');
+                dom.gameArea.classList.remove('active');
+                dom.passwordModal.classList.remove('active');
+                dom.userLoginModal.classList.remove('active');
+            }
+        }
+
+        function renderUserCards() {
+            if (!state.isGameStarted) {
+                dom.userCards.innerHTML =
+                    `<div style="grid-column:1/-1;text-align:center;padding:30px;opacity:0.3;font-size:1.2em;font-weight:700;border:3px dashed #8ab3d4;border-radius:30px;padding:40px;background:#e4eff9;">⏳ Esperando que el administrador inicie el juego...</div>`;
+                return;
+            }
+
+            let html = '';
+            const sortedPlayers = [...state.players].sort((a, b) => a.id - b.id);
+
+            sortedPlayers.forEach(p => {
+                const estaOcupado = p.registrado;
+                const emoji = estaOcupado ? (p.animal ? p.animal.emoji : '🔒') : '❓';
+                const estadoTexto = estaOcupado ? '✅ Ocupado' : '❓ Disponible';
+                const claseEstado = estaOcupado ? 'ocupado' : 'vacio';
+
+                let anteriorHtml = '';
+                if (estaOcupado && p.animal_anterior) {
+                    anteriorHtml = `<div class="card-anterior">↳ Antes: ${p.animal_anterior.emoji}</div>`;
+                }
+
+                html += `
+                    <div class="user-card ${claseEstado}" data-userid="${p.id}" data-estado="${estaOcupado ? 'ocupado' : 'vacio'}">
+                        <span class="card-emoji">${emoji}</span>
+                        <div class="card-status">${estadoTexto}</div>
+                        ${anteriorHtml}
+                    </div>
+                `;
+            });
+
+            dom.userCards.innerHTML = html;
+
+            document.querySelectorAll('.user-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const id = parseInt(card.dataset.userid);
+                    const user = state.players.find(p => p.id === id);
+                    if (!user) return;
+                    const estado = card.dataset.estado;
+
+                    if (estado === 'vacio') {
+                        selectedCardId = id;
+                        dom.selectedCardInfo.innerHTML = `<strong>🎴 Disponible</strong>`;
+                        dom.passwordModal.classList.add('active');
+                        dom.userSelectModal.classList.remove('active');
+                        dom.nameInput.value = '';
+                        dom.passwordInput.value = '';
+                        dom.passwordConfirmInput.value = '';
+                        dom.passwordError.textContent = '';
+                        dom.nameInput.focus();
+                    } else if (estado === 'ocupado') {
+                        if (!user.nombre || !user.password) {
+                            showToast('Esta tarjeta tiene datos incompletos, contacta al administrador', '⚠️',
+                                'warning');
+                            return;
+                        }
+                        loginUserId = id;
+                        dom.loginCardInfo.innerHTML =
+                            `<strong>🔒 ${user.animal ? user.animal.emoji : '🔒'}</strong>`;
+                        dom.userLoginModal.classList.add('active');
+                        dom.userSelectModal.classList.remove('active');
+                        dom.loginPasswordInput.value = '';
+                        dom.loginError.textContent = '';
+                        dom.loginPasswordInput.focus();
+                    }
+                });
+            });
+        }
+
+        // ============================================================
+        //  BATERÍA SOCIAL - RENDER (SIN BOTÓN GUARDAR)
+        // ============================================================
+        function renderBattery(player, isMiPersonaje) {
+            const level = player.bateria_social !== undefined && player.bateria_social !== null ? player.bateria_social :
+                100;
+            const msg = getBatteryMessage(level);
+            const color = getBatteryColor(level);
+
+            return `
+                <div class="battery-social-container" data-player="${player.id}">
+                    <div class="battery-social-header">
+                        <span class="label">🔋 Batería Social</span>
+                        <span class="level-text" style="color: ${color}">${level}% ${msg.emoji}</span>
+                    </div>
+                    <div class="battery-bar">
+                        <div class="battery-bar-fill" style="width: ${level}%; background: ${color};"></div>
+                    </div>
+                    <div class="battery-status-text">
+                        <span>${msg.estado}</span>
+                        <span class="emoji">${msg.emoji}</span>
+                    </div>
+                    ${isMiPersonaje ? `
+                        <div class="battery-edit visible">
+                            <input type="range" min="0" max="100" value="${level}" class="battery-slider" data-player="${player.id}">
+                            <div class="quick-presets">
+                                <button data-value="0" data-player="${player.id}">💀 0%</button>
+                                <button data-value="25" data-player="${player.id}">🪫 25%</button>
+                                <button data-value="50" data-player="${player.id}">😐 50%</button>
+                                <button data-value="75" data-player="${player.id}">😊 75%</button>
+                                <button data-value="100" data-player="${player.id}">⚡ 100%</button>
+                            </div>
+                        </div>
+                    ` : `
+                        <div class="battery-lock">🔒 Solo el dueño puede ajustar</div>
+                    `}
+                </div>
+            `;
+        }
+
+        // ============================================================
+        //  BATERÍA SOCIAL - EVENTOS (GUARDA AUTOMÁTICAMENTE)
+        // ============================================================
+        let batterySaveTimeout = null;
+
+        function setupBatteryEvents() {
+            // Sliders - guardar automáticamente al soltar
+            document.querySelectorAll('.battery-slider').forEach(slider => {
+                slider.removeEventListener('change', handleBatteryChange);
+                slider.addEventListener('change', handleBatteryChange);
+                slider.removeEventListener('input', handleBatteryPreview);
+                slider.addEventListener('input', handleBatteryPreview);
+            });
+
+            function handleBatteryPreview(e) {
+                const playerId = parseInt(e.target.dataset.player);
+                const value = parseInt(e.target.value);
+                const container = document.querySelector(
+                    `.battery-social-container[data-player="${playerId}"]`);
+                if (container) {
+                    const fill = container.querySelector('.battery-bar-fill');
+                    const levelText = container.querySelector('.level-text');
+                    const statusText = container.querySelector('.battery-status-text span:first-child');
+                    const emojiSpan = container.querySelector('.battery-status-text .emoji');
+                    const color = getBatteryColor(value);
+                    const msg = getBatteryMessage(value);
+                    if (fill) { fill.style.width = value + '%';
+                        fill.style.background = color; }
+                    if (levelText) { levelText.textContent = value + '% ' + msg.emoji;
+                        levelText.style.color = color; }
+                    if (statusText) { statusText.textContent = msg.estado; }
+                    if (emojiSpan) { emojiSpan.textContent = msg.emoji; }
+                }
+            }
+
+            async function handleBatteryChange(e) {
+                const playerId = parseInt(e.target.dataset.player);
+                const value = parseInt(e.target.value);
+                const container = document.querySelector(
+                    `.battery-social-container[data-player="${playerId}"]`);
+                if (container) {
+                    const player = state.players.find(p => p.id === playerId);
+                    if (player) {
+                        // Guardar automáticamente al soltar el slider
+                        await updatePlayer(playerId, { bateria_social: value });
+                        if (state.currentUser && state.currentUser.id === playerId) {
+                            state.currentUser.bateria_social = value;
+                        }
+                        showToast(`Batería social actualizada a ${value}%`, '🔋', 'success');
+                        await loadData();
+                        renderAll();
+                        restoreInputValues();
+                    }
+                }
+            }
+
+            // Botones presets - guardar automáticamente
+            document.querySelectorAll('.quick-presets button').forEach(btn => {
+                btn.removeEventListener('click', handleBatteryPreset);
+                btn.addEventListener('click', handleBatteryPreset);
+            });
+
+            async function handleBatteryPreset(e) {
+                const playerId = parseInt(e.target.dataset.player);
+                const value = parseInt(e.target.dataset.value);
+                const container = document.querySelector(
+                    `.battery-social-container[data-player="${playerId}"]`);
+                if (container) {
+                    const slider = container.querySelector('.battery-slider');
+                    if (slider) {
+                        slider.value = value;
+                        // Disparar evento para actualizar la vista previa
+                        slider.dispatchEvent(new Event('input'));
+
+                        // Guardar automáticamente
+                        const player = state.players.find(p => p.id === playerId);
+                        if (player) {
+                            await updatePlayer(playerId, { bateria_social: value });
+                            if (state.currentUser && state.currentUser.id === playerId) {
+                                state.currentUser.bateria_social = value;
+                            }
+                            showToast(`Batería social actualizada a ${value}%`, '🔋', 'success');
+                            await loadData();
+                            renderAll();
+                            restoreInputValues();
+                        }
+                    }
+                }
+            }
+        }
+
+        function renderGame() {
+            if (!state.isGameStarted || state.players.length === 0 || !state.currentUser) {
+                dom.animalsGrid.innerHTML = '';
+                return;
+            }
+            const miId = state.currentUser.id;
+
+            // No cerrar dropdowns automáticamente si están abiertos
+            // document.querySelectorAll('.reactions-dropdown.show').forEach(d => d.classList.remove('show'));
+
+            dom.animalsGrid.innerHTML = state.players.map(player => {
+                if (!player.animal || !player.nombre) {
+                    return `<div class="animal-card">
+                        <div class="animal-header"><span class="animal-emoji">❓</span><div class="animal-name">Sin asignar</div><div class="animal-identity">???</div></div>
+                        <div style="text-align:center;opacity:0.4;padding:20px;font-weight:600;">Esta tarjeta está vacía</div>
+                    </div>`;
+                }
+                const animal = player.animal;
+                const mostrarNombre = state.revealIdentities ? `(${player.nombre})` : '???';
+                const esMiPersonaje = player.id === miId;
+                const comentarios = player.comentarios || [];
+                const comentariosHtml = comentarios.slice(-5).map((c, idx) => {
+                    const autor = state.players.find(p => p.id === c.autorId);
+                    const autorEmoji = autor && autor.animal ? autor.animal.emoji : '❓';
+                    const esComentarioPropio = state.currentUser && state.currentUser.id === c.autorId;
+                    return `<div class="comic-comment" data-comment-id="${c.id}">
+                        <span class="comment-emoji">${c.emoji || '💬'}</span>
+                        <span class="comment-author-emoji">${autorEmoji}</span>
+                        <span class="comment-text" id="comment-text-${c.id}">${c.texto}</span>
+                        <span class="comment-time">${c.timestamp}</span>
+                        <div class="comment-actions">
+                            ${esComentarioPropio ? `
+                                <button class="comment-edit-btn" data-action="edit-comment" data-player="${player.id}" data-comment-id="${c.id}">✏️</button>
+                            ` : ''}
+                            <button class="comment-delete-btn" data-action="delete-comment" data-player="${player.id}" data-comment-id="${c.id}">🗑️</button>
+                        </div>
+                    </div>`;
+                }).join('');
+
+                const reacciones = player.reacciones || {};
+                const dropdownId = `dropdown-${player.id}`;
+
+                const userReactionKey = `user_${state.currentUser.id}`;
+                const currentUserReaction = reacciones[userReactionKey] || null;
+
+                let reactionPillsHtml = '';
+                const reactionKeys = Object.keys(reacciones).filter(key => !key.startsWith('user_'));
+
+                const emojiCounts = {};
+                reactionKeys.forEach(key => {
+                    const emoji = key;
+                    if (emojiCounts[emoji]) {
+                        emojiCounts[emoji] += reacciones[key];
+                    } else {
+                        emojiCounts[emoji] = reacciones[key];
+                    }
+                });
+
+                const sortedEmojis = Object.keys(emojiCounts).sort((a, b) => emojiCounts[b] - emojiCounts[a]);
+
+                sortedEmojis.forEach(emoji => {
+                    const count = emojiCounts[emoji];
+                    const isUserReaction = (currentUserReaction === emoji);
+                    const userClass = isUserReaction ? 'user-reaction' : '';
+                    reactionPillsHtml += `
+                        <span class="reaction-pill ${userClass}">
+                            <span class="reaction-emoji">${emoji}</span>
+                            <span class="reaction-count">${count}</span>
+                        </span>
+                    `;
+                });
+
+                // Construir el dropdown con secciones
+                let dropdownOptionsHtml = '';
+                REACTION_SECTIONS.forEach(section => {
+                    dropdownOptionsHtml +=
+                        `<div style="grid-column:1/-1;font-size:0.6em;font-weight:700;opacity:0.5;padding:4px 0 2px 0;text-align:center;border-bottom:1px dashed rgba(0,0,0,0.08);">${section.title}</div>`;
+                    section.emojis.forEach(emoji => {
+                        const isActive = (currentUserReaction === emoji);
+                        dropdownOptionsHtml += `
+                            <button class="reaction-option ${isActive ? 'active' : ''}" 
+                                    data-action="reaccion-burbuja" 
+                                    data-player="${player.id}" 
+                                    data-emoji="${emoji}"
+                                    style="${isActive ? 'background:#c4dcef;border-color:#5b9bd5;border-radius:30px;' : ''}">
+                                ${emoji}
+                            </button>
+                        `;
+                    });
+                });
+
+                const bateriaHtml = renderBattery(player, esMiPersonaje);
+
+                return `
+                    <div class="animal-card ${esMiPersonaje ? 'mi-personaje' : ''}">
+                        ${esMiPersonaje ? `<div class="mi-personaje-label-container"><span class="mi-personaje-label">⭐ TU PERSONAJE</span></div>` : ''}
+                        <div class="animal-header">
+                            <span class="animal-emoji">${animal.emoji}</span>
+                            <div class="animal-name">${animal.nombre}</div>
+                            <div class="animal-identity">${mostrarNombre}</div>
+                        </div>
+
+                        ${bateriaHtml}
+
+                        <div class="comic-bubble-container">
+                            <div class="comic-message">${player.mensaje || '🐾 ...'}</div>
+                            <div class="comic-time">${player.mensaje ? formatTime() : ''}</div>
+                        </div>
+
+                        <div class="reactions-wrapper" id="reactions-wrapper-${player.id}">
+                            ${reactionPillsHtml}
+                            
+                            <div class="reactions-container">
+                                <button class="reaction-like-btn" data-action="toggle-reactions" data-target="${dropdownId}">
+                                    <span class="like-icon">${currentUserReaction || '👍'}</span>
+                                    <span class="like-text">${currentUserReaction ? 'Reaccionado' : 'Like'}</span>
+                                </button>
+                                <div class="reactions-dropdown" id="${dropdownId}">
+                                    <div class="reactions-grid">
+                                        ${dropdownOptionsHtml}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        ${comentariosHtml ? `<div class="comic-comments">${comentariosHtml}</div>` : ''}
+
+                        <div class="bubble-edit-area ${esMiPersonaje ? 'visible' : ''}">
+                            <textarea placeholder="Cambiar frase de la burbuja..." maxlength="100" data-action="msg-input" data-id="${player.id}" rows="1"></textarea>
+                            <button data-action="send-msg" data-id="${player.id}">📨</button>
+                        </div>
+
+                        <div class="comment-input-area ${!esMiPersonaje ? 'visible' : ''}">
+                            <textarea placeholder="Comentar..." maxlength="100" data-action="comment-input" data-player="${player.id}" rows="1"></textarea>
+                            <button data-action="send-comment" data-player="${player.id}">💬</button>
+                        </div>
+                        ${esMiPersonaje ? '<div class="lock-label">🔒 No puedes comentar tu propio personaje</div>' : ''}
+                    </div>
+                `;
+            }).join('');
+
+            // Ajustar altura de textareas
+            document.querySelectorAll('.bubble-edit-area textarea, .comment-input-area textarea').forEach(textarea => {
+                textarea.style.height = 'auto';
+                textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
+            });
+
+            // ============================================================
+            //  EVENTOS DE DROPDOWN - CONTROL DE PAUSA DE ACTUALIZACIÓN
+            // ============================================================
+
+            document.querySelectorAll('[data-action="toggle-reactions"]').forEach(btn => {
+                btn.removeEventListener('click', handleToggleDropdown);
+                btn.addEventListener('click', handleToggleDropdown);
+            });
+
+            function handleToggleDropdown(e) {
+                e.stopPropagation();
+                const targetId = e.target.dataset.target || e.currentTarget.dataset.target;
+                const dropdown = document.getElementById(targetId);
+                if (!dropdown) return;
+
+                // Cerrar otros dropdowns
+                document.querySelectorAll('.reactions-dropdown.show').forEach(d => {
+                    if (d.id !== targetId) {
+                        d.classList.remove('show');
+                    }
+                });
+
+                // Alternar el dropdown
+                dropdown.classList.toggle('show');
+
+                // Actualizar estado de dropdown abierto
+                dropdownOpen = document.querySelectorAll('.reactions-dropdown.show').length > 0;
+
+                if (dropdownOpen) {
+                    console.log('🔽 Dropdown abierto - auto-actualización pausada');
+                } else {
+                    console.log('🔼 Dropdown cerrado - auto-actualización reanudada');
+                    // Forzar una actualización al cerrar el dropdown
+                    setTimeout(() => {
+                        if (!dropdownOpen) {
+                            autoUpdate();
+                        }
+                    }, 300);
+                }
+            }
+
+            // Cerrar dropdown al hacer clic fuera
+            document.removeEventListener('click', closeAllDropdowns);
+            document.addEventListener('click', closeAllDropdowns);
+
+            function closeAllDropdowns(e) {
+                // Si el clic es dentro de un dropdown o en el botón like, no cerrar
+                if (e.target.closest('.reactions-wrapper') || e.target.closest('.reactions-dropdown')) {
+                    return;
+                }
+
+                // Cerrar todos los dropdowns
+                document.querySelectorAll('.reactions-dropdown.show').forEach(d => {
+                    d.classList.remove('show');
+                });
+
+                dropdownOpen = false;
+                // Forzar actualización al cerrar
+                setTimeout(() => {
+                    if (!dropdownOpen) {
+                        autoUpdate();
+                    }
+                }, 300);
+            }
+
+            // ============================================================
+            //  EVENTOS DE COMENTARIOS
+            // ============================================================
+
+            document.querySelectorAll('[data-action="edit-comment"]').forEach(btn => {
+                btn.removeEventListener('click', handleEditComment);
+                btn.addEventListener('click', handleEditComment);
+            });
+
+            function handleEditComment(e) {
+                const playerId = parseInt(e.target.dataset.player);
+                const commentId = parseFloat(e.target.dataset.commentId);
+                const textElement = document.getElementById(`comment-text-${commentId}`);
+                if (textElement) {
+                    const player = state.players.find(p => p.id === playerId);
+                    if (player) {
+                        const comentarios = player.comentarios || [];
+                        const comment = comentarios.find(c => c.id === commentId);
+                        if (comment) {
+                            if (state.currentUser && state.currentUser.id === comment.autorId) {
+                                showEditModal('edit-comment', { playerId, commentId }, textElement.textContent,
+                                    'Editando comentario');
+                            } else {
+                                showToast('No puedes editar este comentario', '⚠️', 'warning');
+                            }
+                        }
+                    }
+                }
+            }
+
+            document.querySelectorAll('[data-action="delete-comment"]').forEach(btn => {
+                btn.removeEventListener('click', handleDeleteComment);
+                btn.addEventListener('click', handleDeleteComment);
+            });
+
+            function handleDeleteComment(e) {
+                const playerId = parseInt(e.target.dataset.player);
+                const commentId = parseFloat(e.target.dataset.commentId);
+                showConfirmModal('delete-comment', { playerId, commentId });
+            }
+
+            // ============================================================
+            //  EVENTOS DE REACCIONES
+            // ============================================================
+
+            document.querySelectorAll('[data-action="reaccion-burbuja"]').forEach(btn => {
+                btn.removeEventListener('click', handleReaction);
+                btn.addEventListener('click', handleReaction);
+            });
+
+            async function handleReaction(e) {
+                e.stopPropagation();
+                const playerId = parseInt(e.target.dataset.player);
+                const newEmoji = e.target.dataset.emoji;
+                if (!state.currentUser) return;
+
+                const player = state.players.find(p => p.id === playerId);
+                if (!player) return;
+
+                const reacciones = player.reacciones || {};
+                const userKey = `user_${state.currentUser.id}`;
+                const currentReaction = reacciones[userKey] || null;
+
+                if (currentReaction === newEmoji) {
+                    delete reacciones[userKey];
+                    if (reacciones[newEmoji]) {
+                        reacciones[newEmoji]--;
+                        if (reacciones[newEmoji] <= 0) {
+                            delete reacciones[newEmoji];
+                        }
+                    }
+                    await updatePlayer(playerId, { reacciones: reacciones });
+                    showToast(`Reacción ${newEmoji} eliminada`, '🗑️', 'success');
+                } else {
+                    if (currentReaction) {
+                        if (reacciones[currentReaction]) {
+                            reacciones[currentReaction]--;
+                            if (reacciones[currentReaction] <= 0) {
+                                delete reacciones[currentReaction];
+                            }
+                        }
+                    }
+                    reacciones[userKey] = newEmoji;
+                    reacciones[newEmoji] = (reacciones[newEmoji] || 0) + 1;
+                    await updatePlayer(playerId, { reacciones: reacciones });
+                    showToast(`Reacción ${newEmoji} agregada`, '👍', 'success');
+                }
+
+                // Cerrar el dropdown después de seleccionar
+                const dropdown = document.getElementById(`dropdown-${playerId}`);
+                if (dropdown) {
+                    dropdown.classList.remove('show');
+                    dropdownOpen = false;
+                }
+
+                await loadData();
+                renderAll();
+                renderUserCards();
+                updateUserInfo();
+                restoreInputValues();
+            }
+
+            // ============================================================
+            //  EVENTOS DE BURBUJA Y COMENTARIOS
+            // ============================================================
+
+            document.querySelectorAll('[data-action="send-msg"]').forEach(btn => {
+                btn.removeEventListener('click', handleSendMsg);
+                btn.addEventListener('click', handleSendMsg);
+            });
+
+            async function handleSendMsg(e) {
+                const id = parseInt(e.target.dataset.id);
+                const textarea = document.querySelector(`[data-action="msg-input"][data-id="${id}"]`);
+                const text = textarea.value.trim();
+                if (text && state.currentUser && state.currentUser.id === id) {
+                    await updatePlayer(id, {
+                        mensaje: text,
+                        comentarios: [],
+                        reacciones: {}
+                    });
+                    textarea.value = '';
+                    showToast('Frase actualizada', '💬', 'success');
+                    await loadData();
+                    renderGame();
+                    renderUserCards();
+                    updateUserInfo();
+                    restoreInputValues();
+                }
+            }
+
+            document.querySelectorAll('.bubble-edit-area textarea, .comment-input-area textarea').forEach(textarea => {
+                textarea.removeEventListener('input', handleTextareaInput);
+                textarea.addEventListener('input', handleTextareaInput);
+            });
+
+            function handleTextareaInput() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+            }
+
+            document.querySelectorAll('.bubble-edit-area textarea').forEach(textarea => {
+                textarea.removeEventListener('keydown', handleBubbleKeydown);
+                textarea.addEventListener('keydown', handleBubbleKeydown);
+            });
+
+            function handleBubbleKeydown(e) {
+                if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) {
+                    e.preventDefault();
+                    const id = parseInt(e.target.dataset.id);
+                    const sendBtn = document.querySelector(`[data-action="send-msg"][data-id="${id}"]`);
+                    if (sendBtn) sendBtn.click();
+                }
+            }
+
+            document.querySelectorAll('.comment-input-area textarea').forEach(textarea => {
+                textarea.removeEventListener('keydown', handleCommentKeydown);
+                textarea.addEventListener('keydown', handleCommentKeydown);
+            });
+
+            function handleCommentKeydown(e) {
+                if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) {
+                    e.preventDefault();
+                    const playerId = parseInt(e.target.dataset.player);
+                    const sendBtn = document.querySelector(
+                        `[data-action="send-comment"][data-player="${playerId}"]`);
+                    if (sendBtn) sendBtn.click();
+                }
+            }
+
+            document.querySelectorAll('[data-action="send-comment"]').forEach(btn => {
+                btn.removeEventListener('click', handleSendComment);
+                btn.addEventListener('click', handleSendComment);
+            });
+
+            async function handleSendComment(e) {
+                const playerId = parseInt(e.target.dataset.player);
+                const textarea = document.querySelector(
+                    `[data-action="comment-input"][data-player="${playerId}"]`);
+                const text = textarea.value.trim();
+                if (text && state.currentUser) {
+                    const player = state.players.find(p => p.id === playerId);
+                    if (player && player.id !== state.currentUser.id) {
+                        const comentarios = player.comentarios || [];
+                        comentarios.push({
+                            id: Date.now(),
+                            texto: text,
+                            timestamp: formatTime(),
+                            emoji: '💬',
+                            autorId: state.currentUser.id
+                        });
+                        await updatePlayer(playerId, { comentarios: comentarios });
+                        textarea.value = '';
+                        clearInputBackup(`comment_${playerId}`);
+                        showToast('Comentario agregado', '💬', 'success');
+                        await loadData();
+                        renderGame();
+                        renderUserCards();
+                        updateUserInfo();
+                        restoreInputValues();
+                    }
+                }
+            }
+
+            // ============================================================
+            //  EVENTOS DE BATERÍA SOCIAL
+            // ============================================================
+            setupBatteryEvents();
+        }
+
+        function renderChat() {
+            if (state.chatMessages.length === 0) {
+                dom.chatMessages.innerHTML =
+                    '<p style="opacity:0.3;text-align:center;padding:20px;font-weight:600;">No hay mensajes en el chat...</p>';
+                return;
+            }
+
+            dom.chatMessages.innerHTML = state.chatMessages.slice(-30).map(msg => {
+                const player = state.players.find(p => p.id === msg.animalId);
+                const animal = player && player.animal ? player.animal : { emoji: '❓', nombre: 'Desconocido' };
+                const esMensajePropio = state.currentUser && state.currentUser.id === msg.animalId;
+
+                return `<div class="chat-message" data-msg-id="${msg.id}">
+                    <span class="chat-emoji">${animal.emoji}</span>
+                    <span class="chat-name">${animal.nombre}</span>
+                    <span class="chat-text" data-msg-id="${msg.id}">${msg.texto}</span>
+                    <span class="chat-time">${msg.timestamp}</span>
+                    <div class="chat-actions">
+                        ${esMensajePropio ? `
+                            <button class="chat-edit-btn" data-action="edit-chat" data-msg-id="${msg.id}">✏️</button>
+                        ` : ''}
+                        <button class="chat-delete-btn" data-action="delete-chat" data-msg-id="${msg.id}">🗑️</button>
+                    </div>
+                </div>`;
+            }).join('');
+
+            const chatSection = dom.chatSection;
+            const isNearBottom = chatSection.scrollHeight - chatSection.scrollTop - chatSection.clientHeight < 100;
+            if (isNearBottom) {
+                dom.chatMessages.scrollTop = dom.chatMessages.scrollHeight;
+            }
+        }
+
+        // ============================================================
+        //  CONFIGURAR SCROLL DEL CHAT
+        // ============================================================
+        function setupChatScroll() {
+            const chatSection = dom.chatSection;
+            const scrollBtn = dom.chatScrollBtn;
+
+            chatSection.removeEventListener('scroll', handleChatScroll);
+            chatSection.addEventListener('scroll', handleChatScroll);
+
+            scrollBtn.removeEventListener('click', handleScrollToBottom);
+            scrollBtn.addEventListener('click', handleScrollToBottom);
+
+            handleChatScroll();
+        }
+
+        function handleChatScroll() {
+            const chatSection = dom.chatSection;
+            const scrollBtn = dom.chatScrollBtn;
+            const isNearBottom = chatSection.scrollHeight - chatSection.scrollTop - chatSection.clientHeight < 100;
+
+            if (isNearBottom) {
+                scrollBtn.classList.remove('show');
+            } else {
+                scrollBtn.classList.add('show');
+            }
+        }
+
+        function handleScrollToBottom() {
+            const chatSection = dom.chatSection;
+            chatSection.scrollTo({
+                top: chatSection.scrollHeight,
+                behavior: 'smooth'
+            });
+            setTimeout(() => {
+                dom.chatScrollBtn.classList.remove('show');
+            }, 500);
+        }
+
+        function renderStats() {
+            const registrados = state.players.filter(p => p.registrado).length;
+            dom.playerCount.textContent = registrados;
+            dom.messageCount.textContent = state.chatMessages.length;
+            dom.redistributionCount.textContent = state.redistributions;
+        }
+
+        function renderAdminTable() {
+            const sortedPlayers = [...state.players].sort((a, b) => a.id - b.id);
+            dom.adminTableBody.innerHTML = sortedPlayers.map((p, index) => {
+                const estaOcupado = p.registrado;
+                const estado = estaOcupado ? '✅ Ocupado' : '❓ Vacío';
+                const estadoClass = estaOcupado ? 'registrado' : 'vacio';
+                const nombreMostrar = estaOcupado ? p.nombre : '—';
+                const animalMostrar = p.animal ? `${p.animal.emoji} ${p.animal.nombre}` : '❓ Sin asignar';
+                const passMostrar = p.password || '—';
+                const anteriorMostrar = p.animal_anterior ? `${p.animal_anterior.emoji}` : '—';
+                const bateriaMostrar = p.bateria_social || 100;
+                const batMsg = getBatteryMessage(bateriaMostrar);
+
+                return `<tr>
+                    <td>#${index + 1}</td>
+                    <td>${nombreMostrar}</td>
+                    <td>${animalMostrar} ${anteriorMostrar !== '—' ? `<span style="font-size:0.7em;opacity:0.4;">↳ ${anteriorMostrar}</span>` : ''}</td>
+                    <td><span class="password-cell">${passMostrar}</span></td>
+                    <td><span class="status-badge ${estadoClass}">${estado}</span></td>
+                    <td>
+                        ${estaOcupado ? `
+                            <button class="btn-sm btn-sm-warning" data-action="admin-change" data-id="${p.id}">🔄 Animal</button>
+                            <button class="btn-sm btn-sm-danger" data-action="admin-reset" data-id="${p.id}">🔓 Liberar</button>
+                            <button class="btn-sm btn-sm-danger" data-action="admin-delete" data-id="${p.id}" style="border-color: #cc5a5a !important; color: #8a2a2a !important; background: #ffcccc;">🗑️ Eliminar</button>
+                        ` : `
+                            <span style="opacity:0.3;font-size:0.8em;">Disponible</span>
+                        `}
+                    </td>
+                </tr>`;
+            }).join('');
+
+            document.querySelectorAll('[data-action="admin-change"]').forEach(btn => {
+                btn.removeEventListener('click', handleAdminChange);
+                btn.addEventListener('click', handleAdminChange);
+            });
+
+            async function handleAdminChange(e) {
+                const id = parseInt(e.target.dataset.id);
+                const player = state.players.find(p => p.id === id);
+                if (player && player.registrado) {
+                    const animal_anterior = player.animal ? { emoji: player.animal.emoji, nombre: player.animal
+                            .nombre } : null;
+                    const animal = getRandomAnimal();
+                    await updatePlayer(id, {
+                        animal_emoji: animal.emoji,
+                        animal_nombre: animal.nombre,
+                        animal_anterior: animal_anterior,
+                        mensaje: '',
+                        comentarios: [],
+                        reacciones: {}
+                    });
+                    showToast(`Animal de "${player.nombre}" cambiado de ${animal_anterior ? animal_anterior.emoji : '❓'} a ${animal.emoji}`,
+                        '🔄', 'success');
+                    await loadData();
+                    renderAll();
+                } else { showToast('Sin animal asignado', '⚠️', 'warning'); }
+            }
+
+            document.querySelectorAll('[data-action="admin-reset"]').forEach(btn => {
+                btn.removeEventListener('click', handleAdminReset);
+                btn.addEventListener('click', handleAdminReset);
+            });
+
+            async function handleAdminReset(e) {
+                const id = parseInt(e.target.dataset.id);
+                const player = state.players.find(p => p.id === id);
+                if (player && confirm(`¿Liberar la tarjeta de "${player.nombre}"?`)) {
+                    await resetUserPassword(id);
+
+                    if (state.currentUser && state.currentUser.id === id) {
+                        localStorage.removeItem('session');
+                        state.currentUser = null;
+                    }
+
+                    await loadData();
+                    renderAll();
+
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                }
+            }
+
+            document.querySelectorAll('[data-action="admin-delete"]').forEach(btn => {
+                btn.removeEventListener('click', handleAdminDelete);
+                btn.addEventListener('click', handleAdminDelete);
+            });
+
+            async function handleAdminDelete(e) {
+                const id = parseInt(e.target.dataset.id);
+                const player = state.players.find(p => p.id === id);
+                if (!player) return;
+
+                if (!confirm(`¿Eliminar permanentemente la tarjeta de "${player.nombre}"? Esta acción no se puede deshacer.`)) {
+                    return;
+                }
+
+                showConfirmModal('admin-delete-player', { playerId: id });
+            }
+        }
+
+        // ============================================================
+        //  CHAT GLOBAL
+        // ============================================================
+        async function sendChatMessage(text) {
+            if (!state.currentUser) {
+                showToast('⚠️ Inicia sesión primero.', '⚠️', 'warning');
+                return;
+            }
+            if (!text.trim()) {
+                showToast('⚠️ Escribe un mensaje.', '⚠️', 'warning');
+                return;
+            }
+            await saveMessage(state.currentUser.id, text);
+            dom.chatInput.value = '';
+            dom.chatInput.style.height = 'auto';
+            showToast('Mensaje enviado', '📨', 'success');
+            await sendTypingIndicator(false);
+            await loadData();
+            renderAll();
+            setTimeout(() => {
+                dom.chatSection.scrollTop = dom.chatSection.scrollHeight;
+            }, 100);
+        }
+
+        function setupChatEvents() {
+            dom.sendChatBtn.removeEventListener('click', handleSendChatClick);
+            dom.sendChatBtn.addEventListener('click', handleSendChatClick);
+
+            dom.chatInput.removeEventListener('keydown', handleChatKeydown);
+            dom.chatInput.addEventListener('keydown', handleChatKeydown);
+
+            dom.chatInput.removeEventListener('input', handleChatInput);
+            dom.chatInput.addEventListener('input', handleChatInput);
+
+            dom.chatInput.removeEventListener('focus', handleChatFocus);
+            dom.chatInput.addEventListener('focus', handleChatFocus);
+            dom.chatInput.removeEventListener('blur', handleChatBlur);
+            dom.chatInput.addEventListener('blur', handleChatBlur);
+            dom.chatInput.removeEventListener('input', handleChatTyping);
+            dom.chatInput.addEventListener('input', handleChatTyping);
+
+            document.querySelectorAll('[data-action="edit-chat"]').forEach(btn => {
+                btn.removeEventListener('click', handleEditChat);
+                btn.addEventListener('click', handleEditChat);
+            });
+
+            document.querySelectorAll('[data-action="delete-chat"]').forEach(btn => {
+                btn.removeEventListener('click', handleDeleteChat);
+                btn.addEventListener('click', handleDeleteChat);
+            });
+        }
+
+        function handleSendChatClick() {
+            const text = dom.chatInput.value;
+            if (text.trim()) { sendChatMessage(text); }
+        }
+
+        function handleChatKeydown(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const text = dom.chatInput.value;
+                if (text.trim()) { sendChatMessage(text); }
+            }
+        }
+
+        function handleChatInput() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+        }
+
+        function handleChatFocus() {
+            isChatInputFocused = true;
+            sendTypingIndicator(true);
+        }
+
+        function handleChatBlur() {
+            isChatInputFocused = false;
+            clearTimeout(typingTimeout);
+            sendTypingIndicator(false);
+        }
+
+        function handleChatTyping() {
+            if (isChatInputFocused && state.currentUser) {
+                clearTimeout(typingTimeout);
+                typingTimeout = setTimeout(() => { sendTypingIndicator(false); }, 3000);
+                sendTypingIndicator(true);
+            }
+        }
+
+        function handleEditChat(e) {
+            const msgId = parseInt(e.target.dataset.msgId);
+            const textElement = document.querySelector(`.chat-text[data-msg-id="${msgId}"]`);
+            if (textElement) {
+                showEditModal('edit-chat', { msgId }, textElement.textContent, 'Editando mensaje del chat');
+            }
+        }
+
+        function handleDeleteChat(e) {
+            const msgId = parseInt(e.target.dataset.msgId);
+            showConfirmModal('delete-chat', { msgId });
+        }
+
+        // ============================================================
+        //  REGISTRO Y LOGIN
+        // ============================================================
+        async function handleRegisterSubmit() {
+            const nombre = dom.nameInput.value.trim();
+            const password = dom.passwordInput.value.trim();
+            const confirm = dom.passwordConfirmInput.value.trim();
+
+            if (!nombre || nombre.length < 2) {
+                dom.passwordError.textContent = '❌ Ingresa un nombre válido (mínimo 2 caracteres)';
+                return;
+            }
+            if (password.length < 8) {
+                dom.passwordError.textContent = '❌ La contraseña debe tener mínimo 8 caracteres';
+                return;
+            }
+            if (password !== confirm) {
+                dom.passwordError.textContent = '❌ Las contraseñas no coinciden';
+                return;
+            }
+
+            if (state.players.some(p => p.nombre && p.nombre.toLowerCase() === nombre.toLowerCase())) {
+                dom.passwordError.textContent = '❌ Ese nombre ya está registrado';
+                return;
+            }
+
+            const success = await registerUser(selectedCardId, nombre, password);
+            if (success) {
+                dom.passwordModal.classList.remove('active');
+                dom.userSelectModal.classList.remove('active');
+                dom.gameArea.classList.add('active');
+                dom.waitingArea.style.display = 'none';
+                dom.nameInput.value = '';
+                dom.passwordInput.value = '';
+                dom.passwordConfirmInput.value = '';
+                renderAll();
+            } else {
+                dom.passwordError.textContent = '❌ Error al registrar';
+            }
+        }
+
+        async function handleUserLogin() {
+            const password = dom.loginPasswordInput.value.trim();
+            if (!password) { dom.loginError.textContent = '❌ Ingresa la contraseña'; return; }
+            await loginUser(loginUserId, password);
+            dom.loginPasswordInput.value = '';
+        }
+
+        function handleAdminLogin() {
+            const password = dom.adminPasswordInput.value.trim();
+            if (password === 'Bxtmxn') {
+                dom.adminLoginModal.classList.remove('active');
+                dom.adminModal.classList.add('active');
+                dom.adminPasswordInput.value = '';
+                dom.adminLoginError.textContent = '';
+                renderAdminTable();
+                showToast('Acceso concedido', '👑', 'success');
+            } else {
+                dom.adminLoginError.textContent = '❌ Contraseña incorrecta';
+                dom.adminPasswordInput.value = '';
+                dom.adminPasswordInput.focus();
+            }
+        }
+
+        function handleAdminFloatClick(e) {
+            e.preventDefault();
+            dom.adminLoginModal.classList.add('active');
+            dom.adminPasswordInput.value = '';
+            dom.adminLoginError.textContent = '';
+            dom.adminPasswordInput.focus();
+        }
+
+        async function handleStartGame() {
+            const count = parseInt(dom.adminCardCount.value) || 1;
+            if (count < 1) {
+                showToast('⚠️ Se necesita al menos 1 tarjeta.', '⚠️', 'warning');
+                return;
+            }
+
+            localStorage.removeItem('session');
+            state.currentUser = null;
+
+            await setCardCount(count);
+
+            try {
+                await supabaseClient.from('configuracion').upsert({ id: 1, juego_iniciado: true, actualizado: new Date()
+                        .toISOString() });
+                await loadData();
+                state.isGameStarted = true;
+                dom.adminModal.classList.remove('active');
+                dom.waitingArea.style.display = 'none';
+                dom.userSelectModal.classList.add('active');
+                dom.gameArea.classList.remove('active');
+                renderAll();
+                showToast('🎮 ¡Juego iniciado! Todas las sesiones cerradas', '🎮', 'success');
+
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+
+            } catch (error) {
+                console.error('Error al iniciar el juego:', error);
+                showToast('Error al iniciar', '❌', 'error');
+            }
+        }
+
+        function setupRealtimeSubscription() {
+            if (!supabaseClient) return;
+            supabaseClient.channel('jugadores-cambios')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'jugadores' }, () => {
+                    console.log('🔄 Cambios en jugadores detectados');
+                    if (!isUserTyping && !isUpdating && !dropdownOpen) autoUpdate();
+                })
+                .subscribe();
+            supabaseClient.channel('configuracion-cambios')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'configuracion' }, () => {
+                    console.log('🔄 Cambios en configuración detectados');
+                    if (!isUserTyping && !isUpdating && !dropdownOpen) autoUpdate();
+                })
+                .subscribe();
+            supabaseClient.channel('mensajes-cambios')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes' }, () => {
+                    console.log('💬 Nuevo mensaje detectado');
+                    if (!isUserTyping && !isUpdating && !dropdownOpen) autoUpdate();
+                })
+                .subscribe();
+            console.log('✅ Suscripciones en tiempo real activas');
+            setupTypingRealtime();
+        }
+
+        dom.adminFloatBtn.addEventListener('click', handleAdminFloatClick);
+
+        dom.adminLoginBtn.addEventListener('click', handleAdminLogin);
+        dom.adminPasswordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAdminLogin(); });
+        dom.adminLoginCancelBtn.addEventListener('click', () => {
+            dom.adminLoginModal.classList.remove('active');
+            dom.adminPasswordInput.value = '';
+            dom.adminLoginError.textContent = '';
+        });
+        dom.adminModalClose.addEventListener('click', () => {
+            dom.adminModal.classList.remove('active');
+        });
+        dom.adminModal.addEventListener('click', (e) => {
+            if (e.target === dom.adminModal) {
+                dom.adminModal.classList.remove('active');
+            }
+        });
+
+        dom.confirmBtn.addEventListener('click', handleConfirm);
+        dom.confirmPasswordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleConfirm(); });
+        dom.confirmCancelBtn.addEventListener('click', closeConfirmModal);
+        dom.confirmModal.addEventListener('click', (e) => { if (e.target === dom.confirmModal) closeConfirmModal(); });
+
+        dom.editSaveBtn.addEventListener('click', handleEditSave);
+        dom.editTextarea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                e.preventDefault();
+                handleEditSave();
+            }
+        });
+        dom.editCancelBtn.addEventListener('click', closeEditModal);
+        dom.editModal.addEventListener('click', (e) => { if (e.target === dom.editModal) closeEditModal(); });
+
+        dom.passwordConfirmBtn.addEventListener('click', handleRegisterSubmit);
+        dom.nameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') dom.passwordInput.focus(); });
+        dom.passwordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') dom.passwordConfirmInput.focus(); });
+        dom.passwordConfirmInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleRegisterSubmit(); });
+
+        dom.loginConfirmBtn.addEventListener('click', handleUserLogin);
+        dom.loginPasswordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleUserLogin(); });
+        dom.loginCancelBtn.addEventListener('click', () => { dom.userLoginModal.classList.remove('active');
+            dom.userSelectModal.classList.add('active');
+            dom.loginPasswordInput.value = '';
+            dom.loginError.textContent = ''; });
+
+        dom.adminSetCardsBtn.addEventListener('click', async () => {
+            const count = parseInt(dom.adminCardCount.value);
+            if (isNaN(count) || count < 1) {
+                showToast('Ingresa un número válido (mínimo 1)', '⚠️', 'warning');
+                return;
+            }
+            if (count > 20) {
+                showToast('Máximo 20 tarjetas', '⚠️', 'warning');
+                return;
+            }
+            await setCardCount(count);
+        });
+
+        dom.adminStartGameBtn.addEventListener('click', handleStartGame);
+        dom.adminRedistributeBtn.addEventListener('click', redistributeAllAnimals);
+        dom.adminRevealBtn.addEventListener('click', () => { state.revealIdentities = true;
+            renderAll();
+            showToast('Identidades reveladas', '🎭', 'success'); });
+        dom.adminHideBtn.addEventListener('click', () => { state.revealIdentities = false;
+            renderAll();
+            showToast('Identidades ocultas', '🔒', 'success'); });
+        dom.adminResetBtn.addEventListener('click', resetGame);
+
+        dom.logoutBtn.addEventListener('click', () => {
+            if (confirm('¿Seguro que quieres cerrar sesión?')) {
+                localStorage.removeItem('session');
+                state.currentUser = null;
+                dom.adminModal.classList.remove('active');
+                dom.gameArea.classList.remove('active');
+                dom.userSelectModal.classList.remove('active');
+                dom.passwordModal.classList.remove('active');
+                dom.userLoginModal.classList.remove('active');
+                renderAll();
+                showToast('Sesión cerrada', '👋', 'success');
+                if (state.isGameStarted) { dom.userSelectModal.classList.add('active'); }
+            }
+        });
+
+        // ============================================================
+        //  INICIALIZACIÓN
+        // ============================================================
+        async function init() {
+            console.log('🚀 Iniciando Faceless...');
+            await ensureConfigTable();
+
+            // Intentar crear la columna bateria_social si no existe
+            await ensureBatteryColumn();
+
+            await loadData();
+
+            if (state.players.length === 0) {
+                await setCardCount(1);
+            }
+
+            const session = localStorage.getItem('session');
+            if (session) {
+                try {
+                    const data = JSON.parse(session);
+                    const user = state.players.find(p => p.id === data.userId);
+                    if (user && user.registrado && user.animal) {
+                        state.currentUser = { id: user.id, nombre: user.nombre, password: user.password, animal: user
+                                .animal, animal_anterior: user.animal_anterior, bateria_social: user
+                                .bateria_social || 100 };
+                        renderAll();
+                        if (state.isGameStarted) {
+                            dom.gameArea.classList.add('active');
+                            dom.userSelectModal.classList.remove('active');
+                            dom.passwordModal.classList.remove('active');
+                            dom.userLoginModal.classList.remove('active');
+                            dom.waitingArea.style.display = 'none';
+                        } else { dom.waitingArea.style.display = 'block'; }
+                        console.log('✅ Sesión restaurada para:', user.nombre);
+                    } else { localStorage.removeItem('session'); }
+                } catch (e) { console.log('Sesión inválida');
+                    localStorage.removeItem('session'); }
+            }
+
+            if (state.currentUser && state.isGameStarted) {
+                const userInDb = state.players.find(p => p.id === state.currentUser.id);
+                if (!userInDb || !userInDb.animal || !userInDb.nombre || !userInDb.registrado) {
+                    localStorage.removeItem('session');
+                    state.currentUser = null;
+                    dom.userSelectModal.classList.add('active');
+                    dom.gameArea.classList.remove('active');
+                    dom.waitingArea.style.display = 'none';
+                }
+            }
+
+            if (state.isGameStarted) {
+                dom.userSelectModal.classList.add('active');
+                dom.waitingArea.style.display = 'none';
+            } else {
+                dom.waitingArea.style.display = 'block';
+                dom.userSelectModal.classList.remove('active');
+            }
+
+            setupRealtimeSubscription();
+            renderAll();
+
+            startAutoUpdate();
+
+            console.log('✅ Faceless iniciado correctamente');
+        }
+
+        async function ensureConfigTable() {
+            try {
+                const { data, error } = await supabaseClient.from('configuracion').select('*').eq('id', 1)
+                    .maybeSingle();
+                if (error && error.code === '42P01') {
+                    console.log('Creando tabla de configuración...');
+                    await supabaseClient.query(
+                        `CREATE TABLE IF NOT EXISTS configuracion (id INTEGER PRIMARY KEY, juego_iniciado BOOLEAN DEFAULT FALSE, actualizado TIMESTAMP DEFAULT NOW()); INSERT INTO configuracion (id, juego_iniciado) VALUES (1, false);`
+                        );
+                } else if (!data) { await supabaseClient.from('configuracion').upsert({ id: 1,
+                        juego_iniciado: false }); }
+            } catch (e) { console.log('Error verificando tabla de configuración:', e); }
+        }
+
+        if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); }
+    </script>
+</body>
+</html>
