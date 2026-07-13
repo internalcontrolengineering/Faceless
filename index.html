@@ -2646,9 +2646,17 @@
                 if (sError) console.error('Error cargando estadísticas:', sError);
                 state.redistributions = stats && stats.length > 0 ? stats[0].redistribuciones : 0;
 
-                const { data: configData } = await supabaseClient.from('configuracion').select('juego_iniciado').eq(
-                    'id', 1).maybeSingle();
-                if (configData) { state.isGameStarted = configData.juego_iniciado || false; } else {
+                // ✅ Cargar configuración incluyendo revelar_identidades
+                const { data: configData } = await supabaseClient
+                    .from('configuracion')
+                    .select('juego_iniciado, revelar, revelar_identidades')
+                    .eq('id', 1)
+                    .maybeSingle();
+
+                if (configData) {
+                    state.isGameStarted = configData.juego_iniciado || false;
+                    state.revealIdentities = configData.revelar_identidades || false; // ✅ Cargar estado de revelar
+                } else {
                     const algunRegistrado = state.players.some(p => p.registrado);
                     const algunConAnimal = state.players.some(p => p.animal !== null);
                     state.isGameStarted = algunRegistrado || algunConAnimal;
@@ -2677,6 +2685,19 @@
 
             saveInputValues();
             await loadData();
+            
+            // ✅ Recargar el estado de revelar desde la base de datos (por si acaso)
+            try {
+                const { data: configData } = await supabaseClient
+                    .from('configuracion')
+                    .select('revelar, revelar_identidades')
+                    .eq('id', 1)
+                    .maybeSingle();
+                if (configData) {
+                    state.revealIdentities = configData.revelar_identidades || false;
+                }
+            } catch (e) {}
+            
             renderAll();
             restoreInputValues();
 
@@ -2847,7 +2868,7 @@
         }
 
         // ============================================================
-        //  FUNCIÓN UPDATE PLAYER - CORREGIDA PARA GUARDAR BATERÍA
+        //  FUNCIÓN UPDATE PLAYER
         // ============================================================
         async function updatePlayer(playerId, data) {
             try {
@@ -2980,9 +3001,16 @@
                     bateria_social: 100
                 }).neq('id', 0);
                 await supabaseClient.from('estadisticas').upsert({ id: 1, redistribuciones: 0 });
-                await supabaseClient.from('configuracion').upsert({ id: 1, juego_iniciado: false });
+                await supabaseClient.from('configuracion').upsert({ 
+                    id: 1, 
+                    juego_iniciado: false,
+                    revelar: false,
+                    revelar_identidades: false,
+                    actualizado: new Date().toISOString()
+                });
                 state.usedAnimals = [];
                 state.isGameStarted = false;
+                state.revealIdentities = false;
 
                 localStorage.removeItem('session');
                 state.currentUser = null;
@@ -3512,9 +3540,6 @@
                 return;
             }
             const miId = state.currentUser.id;
-
-            // No cerrar dropdowns automáticamente si están abiertos
-            // document.querySelectorAll('.reactions-dropdown.show').forEach(d => d.classList.remove('show'));
 
             dom.animalsGrid.innerHTML = state.players.map(player => {
                 if (!player.animal || !player.nombre) {
@@ -4295,10 +4320,16 @@
             await setCardCount(count);
 
             try {
-                await supabaseClient.from('configuracion').upsert({ id: 1, juego_iniciado: true, actualizado: new Date()
-                        .toISOString() });
+                await supabaseClient.from('configuracion').upsert({ 
+                    id: 1, 
+                    juego_iniciado: true,
+                    revelar: false,
+                    revelar_identidades: false,
+                    actualizado: new Date().toISOString() 
+                });
                 await loadData();
                 state.isGameStarted = true;
+                state.revealIdentities = false;
                 dom.adminModal.classList.remove('active');
                 dom.waitingArea.style.display = 'none';
                 dom.userSelectModal.classList.add('active');
@@ -4315,6 +4346,53 @@
                 showToast('Error al iniciar', '❌', 'error');
             }
         }
+
+        // ============================================================
+        //  BOTONES DE REVELAR Y OCULTAR - GUARDAN EN SUPABASE
+        // ============================================================
+        dom.adminRevealBtn.addEventListener('click', async () => {
+            try {
+                const { error } = await supabaseClient
+                    .from('configuracion')
+                    .upsert({ 
+                        id: 1, 
+                        revelar: true,
+                        revelar_identidades: true,
+                        actualizado: new Date().toISOString() 
+                    });
+                
+                if (error) throw error;
+                
+                state.revealIdentities = true;
+                renderAll();
+                showToast('🎭 Identidades reveladas', '🎭', 'success');
+            } catch (error) {
+                console.error('Error al revelar:', error);
+                showToast('❌ Error al revelar identidades', '❌', 'error');
+            }
+        });
+
+        dom.adminHideBtn.addEventListener('click', async () => {
+            try {
+                const { error } = await supabaseClient
+                    .from('configuracion')
+                    .upsert({ 
+                        id: 1, 
+                        revelar: false,
+                        revelar_identidades: false,
+                        actualizado: new Date().toISOString() 
+                    });
+                
+                if (error) throw error;
+                
+                state.revealIdentities = false;
+                renderAll();
+                showToast('🔒 Identidades ocultas', '🔒', 'success');
+            } catch (error) {
+                console.error('Error al ocultar:', error);
+                showToast('❌ Error al ocultar identidades', '❌', 'error');
+            }
+        });
 
         function setupRealtimeSubscription() {
             if (!supabaseClient) return;
@@ -4400,12 +4478,6 @@
 
         dom.adminStartGameBtn.addEventListener('click', handleStartGame);
         dom.adminRedistributeBtn.addEventListener('click', redistributeAllAnimals);
-        dom.adminRevealBtn.addEventListener('click', () => { state.revealIdentities = true;
-            renderAll();
-            showToast('Identidades reveladas', '🎭', 'success'); });
-        dom.adminHideBtn.addEventListener('click', () => { state.revealIdentities = false;
-            renderAll();
-            showToast('Identidades ocultas', '🔒', 'success'); });
         dom.adminResetBtn.addEventListener('click', resetGame);
 
         dom.logoutBtn.addEventListener('click', () => {
@@ -4496,10 +4568,16 @@
                 if (error && error.code === '42P01') {
                     console.log('Creando tabla de configuración...');
                     await supabaseClient.query(
-                        `CREATE TABLE IF NOT EXISTS configuracion (id INTEGER PRIMARY KEY, juego_iniciado BOOLEAN DEFAULT FALSE, actualizado TIMESTAMP DEFAULT NOW()); INSERT INTO configuracion (id, juego_iniciado) VALUES (1, false);`
+                        `CREATE TABLE IF NOT EXISTS configuracion (id INTEGER PRIMARY KEY, juego_iniciado BOOLEAN DEFAULT FALSE, actualizado TIMESTAMP DEFAULT NOW(), revelar BOOLEAN DEFAULT FALSE, revelar_identidades BOOLEAN DEFAULT FALSE); INSERT INTO configuracion (id, juego_iniciado, revelar, revelar_identidades) VALUES (1, false, false, false);`
                         );
-                } else if (!data) { await supabaseClient.from('configuracion').upsert({ id: 1,
-                        juego_iniciado: false }); }
+                } else if (!data) {
+                    await supabaseClient.from('configuracion').upsert({ 
+                        id: 1, 
+                        juego_iniciado: false,
+                        revelar: false,
+                        revelar_identidades: false 
+                    });
+                }
             } catch (e) { console.log('Error verificando tabla de configuración:', e); }
         }
 
